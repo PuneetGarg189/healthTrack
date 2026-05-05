@@ -7,7 +7,6 @@ const MedicineSchedule = () => {
   const { patientId } = useParams();
   const { patients, fetchPatients, fetchMedicationsForPatient } = useContext(DataContext);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
-  const [scheduleData, setScheduleData] = useState([]);
   const [complianceHistory, setComplianceHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(true);

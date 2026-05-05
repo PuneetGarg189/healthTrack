@@ -20,19 +20,19 @@ export const Medications = () => {
 
   React.useEffect(() => {
     fetchPatients();
-  }, []);
+  }, [fetchPatients]);
 
   React.useEffect(() => {
     if (patients.length > 0 && !selectedPatientId) {
       setSelectedPatientId(patients[0]._id);
     }
-  }, [patients]);
+  }, [patients, selectedPatientId]);
 
   React.useEffect(() => {
     if (selectedPatientId) {
       fetchMedicationsForPatient(selectedPatientId);
     }
-  }, [selectedPatientId]);
+  }, [selectedPatientId, fetchMedicationsForPatient]);
 
   const getTimeTaken = () => new Date().toISOString().slice(11, 16);
 

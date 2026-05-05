@@ -1,10 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { DataContext } from '../context/DataContext';
 import '../styles/MedicationForm.css';
 
 export const MedicationForm = ({ patientId, existingMedication = null, onMedicationSaved }) => {
   const { addMedication, updateMedication, loading } = useContext(DataContext);
-  const buildDefaultForm = (override = {}) => ({
+  const buildDefaultForm = useCallback((override = {}) => ({
     patientId,
     medicineName: '',
     dosage: '',
@@ -19,7 +19,7 @@ export const MedicationForm = ({ patientId, existingMedication = null, onMedicat
     notes: '',
     sideEffects: [],
     ...override
-  });
+  }), [patientId]);
 
   const [formData, setFormData] = useState(buildDefaultForm());
 
@@ -48,7 +48,7 @@ export const MedicationForm = ({ patientId, existingMedication = null, onMedicat
       notes: existingMedication.notes || '',
       sideEffects: existingMedication.sideEffects || []
     }));
-  }, [existingMedication, patientId]);
+  }, [existingMedication, patientId, buildDefaultForm]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

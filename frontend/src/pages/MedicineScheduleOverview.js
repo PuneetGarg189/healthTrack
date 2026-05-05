@@ -7,7 +7,6 @@ import '../styles/MedicineScheduleOverview.css';
 export const MedicineScheduleOverview = () => {
   const navigate = useNavigate();
   const { patients, fetchPatients } = useContext(DataContext);
-  const [selectedPatient, setSelectedPatient] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [medicationsByPatient, setMedicationsByPatient] = useState({});
   const [loading, setLoading] = useState(false);
