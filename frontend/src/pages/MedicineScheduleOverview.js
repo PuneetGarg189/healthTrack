@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { DataContext } from '../context/DataContext';
@@ -6,16 +6,65 @@ import '../styles/MedicineScheduleOverview.css';
 
 export const MedicineScheduleOverview = () => {
   const navigate = useNavigate();
-  const { patients, medications } = useContext(DataContext);
+  const { patients, fetchPatients } = useContext(DataContext);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [medicationsByPatient, setMedicationsByPatient] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+
+  useEffect(() => {
+    fetchPatients();
+  }, [fetchPatients]);
+
+  useEffect(() => {
+    const fetchMedications = async () => {
+      if (patients.length === 0) {
+        setMedicationsByPatient({});
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+
+      try {
+        const results = await Promise.all(
+          patients.map(async (patient) => {
+            const response = await fetch(`${API_BASE_URL}/medications/${patient._id}`, { headers });
+            const data = await response.json();
+            return [patient._id, data.success ? data.data : []];
+          })
+        );
+
+        const medsMap = results.reduce((acc, [patientId, meds]) => {
+          acc[patientId] = meds;
+          return acc;
+        }, {});
+
+        setMedicationsByPatient(medsMap);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMedications();
+  }, [patients, API_BASE_URL]);
 
   const filteredPatients = patients.filter(p =>
     p.isActive && p.fullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getPatientMedicines = (patientId) => {
-    return medications.filter(m => m.patientId === patientId && m.isActive);
+    return (medicationsByPatient[patientId] || []).filter(m => m.isActive);
   };
 
   const getScheduleDisplay = (medicine) => {
@@ -49,7 +98,19 @@ export const MedicineScheduleOverview = () => {
           />
         </div>
 
-        {filteredPatients.length > 0 ? (
+        {loading && (
+          <div className="no-patients">
+            <p>Loading schedules...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="no-patients">
+            <p>{error}</p>
+          </div>
+        )}
+
+        {!loading && !error && filteredPatients.length > 0 ? (
           <div className="patients-schedules">
             {filteredPatients.map(patient => {
               const patientMeds = getPatientMedicines(patient._id);

@@ -5,9 +5,18 @@ import { MedicationForm } from '../components/MedicationForm';
 import '../styles/Medications.css';
 
 export const Medications = () => {
-  const { patients, fetchPatients, fetchMedicationsForPatient, medications, loading } = useContext(DataContext);
+  const {
+    patients,
+    fetchPatients,
+    fetchMedicationsForPatient,
+    medications,
+    logCompliance,
+    loading
+  } = useContext(DataContext);
   const [selectedPatientId, setSelectedPatientId] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [editingMedication, setEditingMedication] = useState(null);
+  const [complianceMessage, setComplianceMessage] = useState('');
 
   React.useEffect(() => {
     fetchPatients();
@@ -24,6 +33,39 @@ export const Medications = () => {
       fetchMedicationsForPatient(selectedPatientId);
     }
   }, [selectedPatientId]);
+
+  const getTimeTaken = () => new Date().toISOString().slice(11, 16);
+
+  const handleCompliance = async (medication, status) => {
+    if (!selectedPatientId) return;
+    try {
+      await logCompliance({
+        patientId: selectedPatientId,
+        medicationId: medication._id,
+        medicineName: medication.medicineName,
+        status,
+        logDate: new Date(),
+        timeTaken: getTimeTaken()
+      });
+      setComplianceMessage(`Recorded: ${medication.medicineName} marked ${status}.`);
+      window.setTimeout(() => setComplianceMessage(''), 2500);
+    } catch (error) {
+      console.error('Error logging compliance:', error);
+    }
+  };
+
+  const handleEdit = (medication) => {
+    setEditingMedication(medication);
+    setShowForm(true);
+  };
+
+  const handleFormSaved = () => {
+    setShowForm(false);
+    setEditingMedication(null);
+    if (selectedPatientId) {
+      fetchMedicationsForPatient(selectedPatientId);
+    }
+  };
 
   return (
     <div className="app-layout">
@@ -60,16 +102,19 @@ export const Medications = () => {
             <div className="form-section">
               <MedicationForm
                 patientId={selectedPatientId}
-                onMedicationAdded={() => {
-                  setShowForm(false);
-                  fetchMedicationsForPatient(selectedPatientId);
-                }}
+                existingMedication={editingMedication}
+                onMedicationSaved={handleFormSaved}
               />
             </div>
           )}
 
           <div className="medications-list-section">
             <h2>Active Medications</h2>
+            {complianceMessage && (
+              <div className="compliance-message" role="status">
+                {complianceMessage}
+              </div>
+            )}
             {loading ? (
               <div className="loading">Loading medications...</div>
             ) : medications.length === 0 ? (
@@ -78,7 +123,16 @@ export const Medications = () => {
               <div className="medications-grid">
                 {medications.map(med => (
                   <div key={med._id} className="medication-card">
-                    <h3>{med.medicineName}</h3>
+                    <div className="medication-card-header">
+                      <h3>{med.medicineName}</h3>
+                      <button
+                        className="btn-outline"
+                        type="button"
+                        onClick={() => handleEdit(med)}
+                      >
+                        Edit
+                      </button>
+                    </div>
                     <div className="med-details">
                       <p><strong>Dosage:</strong> {med.dosage}</p>
                       <p><strong>Frequency:</strong> {med.frequency}</p>
@@ -87,6 +141,24 @@ export const Medications = () => {
                         {med.schedule.morning && '🌅'} {med.schedule.afternoon && '☀️'} {med.schedule.night && '🌙'}
                       </p>
                       {med.notes && <p><strong>Notes:</strong> {med.notes}</p>}
+                    </div>
+                    <div className="medication-actions">
+                      <button
+                        className="btn-success"
+                        type="button"
+                        onClick={() => handleCompliance(med, 'Taken')}
+                        disabled={loading}
+                      >
+                        Mark Taken
+                      </button>
+                      <button
+                        className="btn-danger"
+                        type="button"
+                        onClick={() => handleCompliance(med, 'Missed')}
+                        disabled={loading}
+                      >
+                        Mark Missed
+                      </button>
                     </div>
                   </div>
                 ))}

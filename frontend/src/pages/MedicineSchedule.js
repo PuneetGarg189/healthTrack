@@ -5,14 +5,37 @@ import '../styles/MedicineSchedule.css';
 
 const MedicineSchedule = () => {
   const { patientId } = useParams();
-  const { patients, medications, getLogsForPatient } = useContext(DataContext);
+  const { patients, fetchPatients, fetchMedicationsForPatient } = useContext(DataContext);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [scheduleData, setScheduleData] = useState([]);
   const [complianceHistory, setComplianceHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [patientMeds, setPatientMeds] = useState([]);
+
+  useEffect(() => {
+    fetchPatients();
+  }, [fetchPatients]);
+
+  useEffect(() => {
+    const loadMedications = async () => {
+      setDataLoading(true);
+      try {
+        const medsData = await fetchMedicationsForPatient(patientId);
+        setPatientMeds(medsData?.data || []);
+      } catch (error) {
+        setPatientMeds([]);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    if (patientId) {
+      loadMedications();
+    }
+  }, [patientId, fetchMedicationsForPatient]);
 
   const patient = patients.find(p => p._id === patientId);
-  const patientMeds = medications.filter(m => m.patientId === patientId);
 
   useEffect(() => {
     if (selectedMedicine) {
@@ -61,7 +84,9 @@ const MedicineSchedule = () => {
         <div className="medicines-list">
           <h3>Active Medicines</h3>
           <div className="medicines-grid">
-            {patientMeds.length > 0 ? (
+            {dataLoading ? (
+              <p className="no-data">Loading medicines...</p>
+            ) : patientMeds.length > 0 ? (
               patientMeds.map((med) => (
                 <div
                   key={med._id}

@@ -216,6 +216,32 @@ export const DataProvider = ({ children }) => {
     }
   }, [API_BASE_URL, medications, fetchGlobalDashboard]);
 
+  const updateMedication = useCallback(async (medicationId, medicationData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/medications/${medicationId}`, {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify(medicationData)
+      });
+      const data = await response.json();
+      if (data.success) {
+        setMedications(medications.map(med => med._id === medicationId ? data.data : med));
+        await fetchGlobalDashboard();
+        return data;
+      } else {
+        setError(data.message);
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL, medications, fetchGlobalDashboard]);
+
   // HEALTH LOG OPERATIONS
   const fetchHealthLogs = useCallback(async (patientId) => {
     setLoading(true);
@@ -262,6 +288,32 @@ export const DataProvider = ({ children }) => {
     }
   }, [API_BASE_URL, healthLogs, fetchGlobalDashboard]);
 
+  // COMPLIANCE OPERATIONS
+  const logCompliance = useCallback(async (complianceData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/compliance`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(complianceData)
+      });
+      const data = await response.json();
+      if (data.success) {
+        await fetchGlobalDashboard();
+        return data;
+      } else {
+        setError(data.message);
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL, fetchGlobalDashboard]);
+
   return (
     <DataContext.Provider
       value={{
@@ -278,8 +330,10 @@ export const DataProvider = ({ children }) => {
         searchPatients,
         fetchMedicationsForPatient,
         addMedication,
+        updateMedication,
         fetchHealthLogs,
         addHealthLog,
+        logCompliance,
         fetchGlobalDashboard,
         fetchPatientAnalytics
       }}

@@ -1,10 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { DataContext } from '../context/DataContext';
 import '../styles/MedicationForm.css';
 
-export const MedicationForm = ({ patientId, onMedicationAdded }) => {
-  const { addMedication, loading } = useContext(DataContext);
-  const [formData, setFormData] = useState({
+export const MedicationForm = ({ patientId, existingMedication = null, onMedicationSaved }) => {
+  const { addMedication, updateMedication, loading } = useContext(DataContext);
+  const buildDefaultForm = (override = {}) => ({
     patientId,
     medicineName: '',
     dosage: '',
@@ -17,10 +17,38 @@ export const MedicationForm = ({ patientId, onMedicationAdded }) => {
     startDate: new Date().toISOString().split('T')[0],
     endDate: '',
     notes: '',
-    sideEffects: []
+    sideEffects: [],
+    ...override
   });
 
+  const [formData, setFormData] = useState(buildDefaultForm());
+
   const [sideEffectInput, setSideEffectInput] = useState('');
+
+  useEffect(() => {
+    if (!existingMedication) {
+      setFormData(buildDefaultForm());
+      return;
+    }
+
+    const toDateValue = (value) => value ? new Date(value).toISOString().split('T')[0] : '';
+
+    setFormData(buildDefaultForm({
+      patientId: existingMedication.patientId || patientId,
+      medicineName: existingMedication.medicineName || '',
+      dosage: existingMedication.dosage || '',
+      frequency: existingMedication.frequency || 'Once Daily',
+      schedule: {
+        morning: Boolean(existingMedication.schedule?.morning),
+        afternoon: Boolean(existingMedication.schedule?.afternoon),
+        night: Boolean(existingMedication.schedule?.night)
+      },
+      startDate: toDateValue(existingMedication.startDate) || new Date().toISOString().split('T')[0],
+      endDate: toDateValue(existingMedication.endDate),
+      notes: existingMedication.notes || '',
+      sideEffects: existingMedication.sideEffects || []
+    }));
+  }, [existingMedication, patientId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -60,19 +88,13 @@ export const MedicationForm = ({ patientId, onMedicationAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addMedication(formData);
-      setFormData({
-        patientId,
-        medicineName: '',
-        dosage: '',
-        frequency: 'Once Daily',
-        schedule: { morning: false, afternoon: false, night: false },
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: '',
-        notes: '',
-        sideEffects: []
-      });
-      onMedicationAdded?.();
+      if (existingMedication?._id) {
+        await updateMedication(existingMedication._id, formData);
+      } else {
+        await addMedication(formData);
+      }
+      setFormData(buildDefaultForm());
+      onMedicationSaved?.();
     } catch (error) {
       console.error('Error adding medication:', error);
     }
@@ -80,7 +102,7 @@ export const MedicationForm = ({ patientId, onMedicationAdded }) => {
 
   return (
     <div className="medication-form">
-      <h2>Add New Medication</h2>
+      <h2>{existingMedication ? 'Edit Medication' : 'Add New Medication'}</h2>
       
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -207,7 +229,7 @@ export const MedicationForm = ({ patientId, onMedicationAdded }) => {
         </div>
 
         <button type="submit" className="submit-btn" disabled={loading}>
-          {loading ? 'Adding...' : 'Add Medication'}
+          {loading ? 'Saving...' : (existingMedication ? 'Update Medication' : 'Add Medication')}
         </button>
       </form>
     </div>
