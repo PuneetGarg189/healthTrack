@@ -121,28 +121,28 @@ MongoDB Atlas
 
 ### Login Page
 
-![Login Page](./frontend/screenshots/login-page.png)
+![Login Page](screenshots/login-page.png)
 
 ### Dashboard
 
-![Dashboard](./frontend/screenshots/dashboard.png)
+![Dashboard](screenshots/dashboard.png)
 
 ### Patient Management
 
-![Patients](./frontend/screenshots/patients.png)
+![Medicine Schedule](screenshots/patient-schedule.png)
+![Patients](screenshots/patients.png)
 
 ### Medication Management
 
-![Medications](./frontend/screenshots/medications.png)
+![Medications](screenshots/medications.png)
 
 ### Health Logs
 
-![Health Logs](./frontend/screenshots/health-logs.png)
+![Health Logs](screenshots/health-logs.png)
 
 ### Medicine Schedule
 
-![Medicine Schedule](./frontend/screenshots/patient-schedule.png)
-
+![Medicine Schedule](screenshots/patient-schedule.png)
 ---
 
 ## 🚀 Installation
