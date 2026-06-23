@@ -94,24 +94,6 @@ const patientSchema = new mongoose.Schema(
       }
     },
 
-    // ARRAY of Visits (embedded documents)
-    visits: [
-      {
-        date: {
-          type: Date,
-          default: Date.now
-        },
-        doctor: {
-          type: String,
-          trim: true
-        },
-        notes: {
-          type: String,
-          trim: true
-        }
-      }
-    ],
-
     // Active status
     isActive: {
       type: Boolean,

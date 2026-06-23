@@ -41,7 +41,7 @@ export const PatientProfile = ({ patientId, onBack }) => {
           <span className="value">{analytics.patient?.age} years</span>
         </div>
         <div className="overview-item">
-          <span className="label">Condition</span>
+          <span className="label">Problem</span>
           <span className="value">{analytics.patient?.condition}</span>
         </div>
         <div className="overview-item">

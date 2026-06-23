@@ -1,4 +1,5 @@
-import React, { createContext, useState, useCallback } from 'react';
+import React, { createContext, useState, useCallback, useContext } from 'react';
+import { AuthContext } from './AuthContext';
 
 export const DataContext = createContext();
 
@@ -9,20 +10,41 @@ export const DataProvider = ({ children }) => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { token, logout } = useContext(AuthContext);
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
 
-  const getHeaders = () => ({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  });
+  const getHeaders = useCallback(() => {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    return headers;
+  }, [token]);
+
+  const authorizedFetch = useCallback(async (url, options = {}) => {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        ...getHeaders(),
+        ...(options.headers || {})
+      }
+    });
+
+    if (response.status === 401) {
+      logout();
+      throw new Error('Session expired. Please log in again.');
+    }
+
+    return response;
+  }, [getHeaders, logout]);
 
   // DASHBOARD OPERATIONS
   const fetchGlobalDashboard = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/dashboard`, { headers: getHeaders() });
+      const response = await authorizedFetch(`${API_BASE_URL}/dashboard`);
       const data = await response.json();
       if (data.success) {
         setDashboardData(data.data);
@@ -35,13 +57,13 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL]);
+  }, [API_BASE_URL, authorizedFetch]);
 
   const fetchPatientAnalytics = useCallback(async (patientId) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/dashboard/patient/${patientId}`, { headers: getHeaders() });
+      const response = await authorizedFetch(`${API_BASE_URL}/dashboard/patient/${patientId}`);
       const data = await response.json();
       if (data.success) {
         return data.data;
@@ -53,14 +75,14 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL]);
+  }, [API_BASE_URL, authorizedFetch]);
 
   // PATIENT OPERATIONS
   const fetchPatients = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/patients`, { headers: getHeaders() });
+      const response = await authorizedFetch(`${API_BASE_URL}/patients`);
       const data = await response.json();
       if (data.success) {
         setPatients(data.data);
@@ -72,15 +94,14 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL]);
+  }, [API_BASE_URL, authorizedFetch]);
 
   const addPatient = useCallback(async (patientData) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/patients`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/patients`, {
         method: 'POST',
-        headers: getHeaders(),
         body: JSON.stringify(patientData)
       });
       const data = await response.json();
@@ -98,15 +119,14 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL, patients, fetchGlobalDashboard]);
+  }, [API_BASE_URL, authorizedFetch, patients, fetchGlobalDashboard]);
 
   const updatePatient = useCallback(async (patientId, patientData) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/patients/${patientId}`, {
         method: 'PUT',
-        headers: getHeaders(),
         body: JSON.stringify(patientData)
       });
       const data = await response.json();
@@ -124,15 +144,14 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL, patients, fetchGlobalDashboard]);
+  }, [API_BASE_URL, authorizedFetch, patients, fetchGlobalDashboard]);
 
   const deletePatient = useCallback(async (patientId) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/patients/${patientId}`, {
         method: 'DELETE',
-        headers: getHeaders()
       });
       const data = await response.json();
       if (data.success) {
@@ -149,13 +168,13 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL, patients, fetchGlobalDashboard]);
+  }, [API_BASE_URL, authorizedFetch, patients, fetchGlobalDashboard]);
 
   const searchPatients = useCallback(async (name) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/patients/search/${name}`, { headers: getHeaders() });
+      const response = await authorizedFetch(`${API_BASE_URL}/patients/search/${name}`);
       const data = await response.json();
       if (data.success) {
         setPatients(data.data);
@@ -168,14 +187,14 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL]);
+  }, [API_BASE_URL, authorizedFetch]);
 
   // MEDICATION OPERATIONS
   const fetchMedicationsForPatient = useCallback(async (patientId) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/medications/${patientId}`, { headers: getHeaders() });
+      const response = await authorizedFetch(`${API_BASE_URL}/medications/${patientId}`);
       const data = await response.json();
       if (data.success) {
         setMedications(data.data);
@@ -188,15 +207,14 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL]);
+  }, [API_BASE_URL, authorizedFetch]);
 
   const addMedication = useCallback(async (medicationData) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/medications`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/medications`, {
         method: 'POST',
-        headers: getHeaders(),
         body: JSON.stringify(medicationData)
       });
       const data = await response.json();
@@ -214,15 +232,14 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL, medications, fetchGlobalDashboard]);
+  }, [API_BASE_URL, authorizedFetch, medications, fetchGlobalDashboard]);
 
   const updateMedication = useCallback(async (medicationId, medicationData) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/medications/${medicationId}`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/medications/${medicationId}`, {
         method: 'PUT',
-        headers: getHeaders(),
         body: JSON.stringify(medicationData)
       });
       const data = await response.json();
@@ -240,14 +257,14 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL, medications, fetchGlobalDashboard]);
+  }, [API_BASE_URL, authorizedFetch, medications, fetchGlobalDashboard]);
 
   // HEALTH LOG OPERATIONS
   const fetchHealthLogs = useCallback(async (patientId) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/logs/${patientId}`, { headers: getHeaders() });
+      const response = await authorizedFetch(`${API_BASE_URL}/logs/${patientId}`);
       const data = await response.json();
       if (data.success) {
         setHealthLogs(data.data);
@@ -260,15 +277,14 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL]);
+  }, [API_BASE_URL, authorizedFetch]);
 
   const addHealthLog = useCallback(async (logData) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/logs`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/logs`, {
         method: 'POST',
-        headers: getHeaders(),
         body: JSON.stringify(logData)
       });
       const data = await response.json();
@@ -286,16 +302,15 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL, healthLogs, fetchGlobalDashboard]);
+  }, [API_BASE_URL, authorizedFetch, healthLogs, fetchGlobalDashboard]);
 
   // COMPLIANCE OPERATIONS
   const logCompliance = useCallback(async (complianceData) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/compliance`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/compliance`, {
         method: 'POST',
-        headers: getHeaders(),
         body: JSON.stringify(complianceData)
       });
       const data = await response.json();
@@ -312,7 +327,7 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL, fetchGlobalDashboard]);
+  }, [API_BASE_URL, authorizedFetch, fetchGlobalDashboard]);
 
   return (
     <DataContext.Provider

@@ -58,8 +58,8 @@ export const GlobalDashboard = () => {
                     dataKey="count"
                     nameKey="status"
                   >
-                    <Cell fill="#16a34a" />
-                    <Cell fill="#ef4444" />
+                    <Cell fill="#16A34A" />
+                    <Cell fill="#EF4444" />
                     <Cell fill="#f59e0b" />
                   </Pie>
                   <Tooltip 

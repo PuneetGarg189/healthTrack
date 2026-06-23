@@ -36,3 +36,4 @@ node_modules
 
 # MongoDB
 *.mongodb
+dump/

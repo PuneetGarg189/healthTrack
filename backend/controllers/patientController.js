@@ -188,36 +188,3 @@ exports.searchPatients = async (req, res) => {
   }
 };
 
-// @desc Add visit to patient
-// @route POST /api/patients/:id/visits
-// @access Private
-// DEMONSTRATES: UPDATE (push to array)
-exports.addVisit = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { date, doctor, notes } = req.body;
-
-    // UPDATE: push to visits array
-    const patient = await Patient.findByIdAndUpdate(
-      id,
-      {
-        $push: {
-          visits: { date, doctor, notes }
-        }
-      },
-      { new: true }
-    );
-
-    if (!patient) {
-      return res.status(404).json({ success: false, message: 'Patient not found' });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: 'Visit added successfully',
-      data: patient
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};

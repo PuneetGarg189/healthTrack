@@ -6,8 +6,7 @@ const {
   getPatient,
   updatePatient,
   deletePatient,
-  searchPatients,
-  addVisit
+  searchPatients
 } = require('../controllers/patientController');
 const { verifyToken } = require('../middleware/authMiddleware');
 
@@ -37,9 +36,5 @@ router.delete('/:id', deletePatient);
 // @route GET /api/patients/search/:name
 // @desc Search patients
 router.get('/search/:name', searchPatients);
-
-// @route POST /api/patients/:id/visits
-// @desc Add visit to patient
-router.post('/:id/visits', addVisit);
 
 module.exports = router;

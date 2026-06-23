@@ -1,4 +1,5 @@
 // Medicine Compliance Controller - CRUD and Aggregation Operations
+const mongoose = require('mongoose');
 const MedicineCompliance = require('../models/MedicineCompliance');
 const Medication = require('../models/Medication');
 
@@ -111,7 +112,7 @@ exports.getComplianceRate = async (req, res) => {
     const result = await MedicineCompliance.aggregate([
       {
         $match: {
-          patientId: require('mongoose').Types.ObjectId(patientId),
+          patientId: new mongoose.Types.ObjectId(patientId),
           logDate: { $gte: startDate }
         }
       },
@@ -156,8 +157,7 @@ exports.getComplianceRate = async (req, res) => {
           totalLogs: 0,
           takenCount: 0,
           missedCount: 0,
-          partialCount: 0
-        }
+          partialCount: 0}
       });
     }
 
@@ -186,7 +186,7 @@ exports.getMostMissedMedicines = async (req, res) => {
     const result = await MedicineCompliance.aggregate([
       {
         $match: {
-          patientId: require('mongoose').Types.ObjectId(patientId),
+          patientId: new mongoose.Types.ObjectId(patientId),
           logDate: { $gte: startDate }
         }
       },

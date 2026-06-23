@@ -313,7 +313,7 @@ exports.getPatientAnalytics = async (req, res) => {
     const { patientId } = req.params;
     const { days = 30 } = req.query;
 
-    const patientObjId = mongoose.Types.ObjectId(patientId);
+    const patientObjId = new mongoose.Types.ObjectId(patientId);
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(days));
 
