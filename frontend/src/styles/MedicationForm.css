@@ -123,7 +123,66 @@
 }
 
 @media (max-width: 768px) {
+
+  .medication-form {
+    padding: 1rem;
+    border-radius: 0.75rem;
+  }
+
+  .medication-form h2 {
+    font-size: 1.3rem;
+    line-height: 1.3;
+  }
+
+  .medication-form h2::before {
+    height: 22px;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .medication-form .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .medication-form label {
+    font-size: 0.9rem;
+  }
+
+  .medication-form input,
+  .medication-form select,
+  .medication-form textarea {
+    padding: 0.85rem;
+    font-size: 0.95rem;
+  }
+
+  .schedule-options {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .schedule-options label {
+    padding: 0.25rem 0;
+  }
+
+  .submit-btn {
+    padding: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .medication-form {
+    padding: 0.75rem;
+  }
+
+  .medication-form h2 {
+    font-size: 1.15rem;
+  }
+
+  .submit-btn {
+    font-size: 0.95rem;
   }
 }

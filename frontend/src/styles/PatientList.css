@@ -160,12 +160,104 @@
 }
 
 @media (max-width: 768px) {
+
+  .patient-list-container {
+    padding: 0.5rem;
+  }
+
   .list-header {
     flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .list-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .search-box {
+    margin-bottom: 1.25rem;
+  }
+
+  .search-box input {
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
   }
 
   .patients-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .patient-card {
+    padding: 1rem;
+  }
+
+  .patient-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .patient-header h3 {
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.65rem 0;
+  }
+
+  .detail-row .label {
+    font-size: 0.8rem;
+  }
+
+  .detail-row span {
+    font-size: 0.9rem;
+  }
+
+  .allergies {
+    padding: 0.75rem;
+  }
+
+  .allergy-tags {
+    gap: 0.4rem;
+  }
+
+  .allergy-tag {
+    font-size: 0.72rem;
+  }
+
+  .btn-view {
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .patient-list-container {
+    padding: 0.25rem;
+  }
+
+  .list-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .patient-card {
+    padding: 0.85rem;
+  }
+
+  .patient-header h3 {
+    font-size: 1rem;
+  }
+
+  .btn-view {
+    font-size: 0.9rem;
+    padding: 0.85rem;
   }
 }

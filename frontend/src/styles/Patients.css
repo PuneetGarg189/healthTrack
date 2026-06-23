@@ -68,3 +68,55 @@
   transform: translateY(-2px);
   box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
 }
+@media (max-width: 768px) {
+
+  .patients-main {
+    padding: 0.5rem;
+  }
+
+  .patients-header {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 0.75rem;
+  }
+
+  .patients-header h1 {
+    font-size: 1.4rem;
+    flex-wrap: wrap;
+    line-height: 1.3;
+  }
+
+  .patients-header h1::before {
+    height: 22px;
+  }
+
+  .patients-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .patients-actions button {
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Small Phones */
+
+@media (max-width: 480px) {
+
+  .patients-header {
+    padding: 1rem;
+  }
+
+  .patients-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .patients-actions button {
+    padding: 0.85rem;
+    font-size: 0.9rem;
+  }
+}

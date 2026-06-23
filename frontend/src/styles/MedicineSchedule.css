@@ -399,21 +399,54 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+
+  .medicine-schedule-container {
+    padding: 1rem;
+  }
+
+  .schedule-header {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .schedule-header h2 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
   .schedule-content {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .medicines-list {
     position: relative;
     top: auto;
+    padding: 1rem;
+  }
+
+  .schedule-detail {
+    padding: 1rem;
+  }
+
+  .medicine-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .medicine-detail-header h3 {
+    font-size: 1.2rem;
   }
 
   .medicine-info-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
   }
 
   .times-grid {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .compliance-stats {
@@ -421,13 +454,71 @@
   }
 
   .medicines-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     max-height: none;
   }
 
   .medicine-card {
-    padding: 12px;
-    font-size: 13px;
+    padding: 0.85rem;
+  }
+
+  .medicine-preview-item,
+  .table-row,
+  .table-header {
+    font-size: 0.8rem;
+  }
+
+  .history-table {
+    overflow-x: auto;
+  }
+
+  .table-header,
+  .table-row {
+    min-width: 500px;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.4rem;
+  }
+
+  .stat-percentage {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .medicine-schedule-container {
+    padding: 0.75rem;
+  }
+
+  .schedule-header {
+    padding: 1rem;
+  }
+
+  .schedule-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .times-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .medicines-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .medicine-detail-header h3 {
+    font-size: 1rem;
+  }
+
+  .schedule-badge,
+  .time-badge,
+  .effect-tag {
+    font-size: 0.65rem;
   }
 }
