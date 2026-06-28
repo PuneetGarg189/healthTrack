@@ -1,22 +1,31 @@
 // Medicine Compliance Controller - CRUD and Aggregation Operations
 const mongoose = require('mongoose');
 const MedicineCompliance = require('../models/MedicineCompliance');
-const Medication = require('../models/Medication');
-
 // @desc Log medicine compliance
 // @route POST /api/compliance
 // @access Private
 // DEMONSTRATES: CREATE (insertOne)
 exports.logCompliance = async (req, res) => {
   try {
-    const { patientId, medicationId, medicineName, logDate, status, timeTaken, notes } = req.body;
+    const {
+      patientId,
+      medicationId,
+      medicineName,
+      logDate,
+      status,
+      timeTaken,
+      notes
+    } = req.body;
 
     if (!patientId || !medicationId || !status) {
-      return res.status(400).json({ success: false, message: 'Please provide required fields' });
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide required fields'
+      });
     }
 
-    // CREATE: insertOne operation
     const compliance = await MedicineCompliance.create({
+      owner: req.user._id,
       patientId,
       medicationId,
       medicineName,
@@ -32,8 +41,18 @@ exports.logCompliance = async (req, res) => {
       data: compliance
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+  if (error.code === 11000) {
+    return res.status(400).json({
+      success: false,
+      message: 'Compliance for this medication has already been logged today.'
+    });
   }
+
+  res.status(500).json({
+    success: false,
+    message: error.message
+  });
+}
 };
 
 // @desc Get compliance logs for patient
@@ -48,8 +67,8 @@ exports.getComplianceForPatient = async (req, res) => {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(days));
 
-    // READ: find with compound index (patientId, logDate)
     const compliance = await MedicineCompliance.find({
+      owner: req.user._id,
       patientId,
       logDate: { $gte: startDate }
     })
@@ -62,7 +81,10 @@ exports.getComplianceForPatient = async (req, res) => {
       data: compliance
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
@@ -75,15 +97,27 @@ exports.updateCompliance = async (req, res) => {
     const { id } = req.params;
     const { status, timeTaken, notes } = req.body;
 
-    // UPDATE: updateOne operation
-    const compliance = await MedicineCompliance.findByIdAndUpdate(
-      id,
-      { status, timeTaken, notes },
-      { new: true, runValidators: true }
+    const compliance = await MedicineCompliance.findOneAndUpdate(
+      {
+        _id: id,
+        owner: req.user._id
+      },
+      {
+        status,
+        timeTaken,
+        notes
+      },
+      {
+        new: true,
+        runValidators: true
+      }
     );
 
     if (!compliance) {
-      return res.status(404).json({ success: false, message: 'Compliance record not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Compliance record not found'
+      });
     }
 
     res.status(200).json({
@@ -92,14 +126,17 @@ exports.updateCompliance = async (req, res) => {
       data: compliance
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
 // @desc Get compliance rate for patient
 // @route GET /api/compliance/:patientId/rate
 // @access Private
-// DEMONSTRATES: AGGREGATION PIPELINE - Calculate compliance rate per patient
+// DEMONSTRATES: AGGREGATION PIPELINE
 exports.getComplianceRate = async (req, res) => {
   try {
     const { patientId } = req.params;
@@ -108,10 +145,10 @@ exports.getComplianceRate = async (req, res) => {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(days));
 
-    // AGGREGATION PIPELINE
     const result = await MedicineCompliance.aggregate([
       {
         $match: {
+          owner: req.user._id,
           patientId: new mongoose.Types.ObjectId(patientId),
           logDate: { $gte: startDate }
         }
@@ -121,13 +158,19 @@ exports.getComplianceRate = async (req, res) => {
           _id: '$patientId',
           totalLogs: { $sum: 1 },
           takenCount: {
-            $sum: { $cond: [{ $eq: ['$status', 'Taken'] }, 1, 0] }
+            $sum: {
+              $cond: [{ $eq: ['$status', 'Taken'] }, 1, 0]
+            }
           },
           missedCount: {
-            $sum: { $cond: [{ $eq: ['$status', 'Missed'] }, 1, 0] }
+            $sum: {
+              $cond: [{ $eq: ['$status', 'Missed'] }, 1, 0]
+            }
           },
           partialCount: {
-            $sum: { $cond: [{ $eq: ['$status', 'Partial'] }, 1, 0] }
+            $sum: {
+              $cond: [{ $eq: ['$status', 'Partial'] }, 1, 0]
+            }
           }
         }
       },
@@ -141,7 +184,14 @@ exports.getComplianceRate = async (req, res) => {
           partialCount: 1,
           complianceRate: {
             $round: [
-              { $multiply: [{ $divide: ['$takenCount', '$totalLogs'] }, 100] },
+              {
+                $multiply: [
+                  {
+                    $divide: ['$takenCount', '$totalLogs']
+                  },
+                  100
+                ]
+              },
               2
             ]
           }
@@ -157,7 +207,8 @@ exports.getComplianceRate = async (req, res) => {
           totalLogs: 0,
           takenCount: 0,
           missedCount: 0,
-          partialCount: 0}
+          partialCount: 0
+        }
       });
     }
 
@@ -166,14 +217,17 @@ exports.getComplianceRate = async (req, res) => {
       data: result[0]
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
 // @desc Get most missed medicines
 // @route GET /api/compliance/:patientId/most-missed
 // @access Private
-// DEMONSTRATES: AGGREGATION PIPELINE - Find most missed medicines
+// DEMONSTRATES: AGGREGATION PIPELINE
 exports.getMostMissedMedicines = async (req, res) => {
   try {
     const { patientId } = req.params;
@@ -182,10 +236,10 @@ exports.getMostMissedMedicines = async (req, res) => {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(days));
 
-    // AGGREGATION PIPELINE
     const result = await MedicineCompliance.aggregate([
       {
         $match: {
+          owner: req.user._id,
           patientId: new mongoose.Types.ObjectId(patientId),
           logDate: { $gte: startDate }
         }
@@ -195,30 +249,47 @@ exports.getMostMissedMedicines = async (req, res) => {
           _id: '$medicineName',
           totalCount: { $sum: 1 },
           missedCount: {
-            $sum: { $cond: [{ $eq: ['$status', 'Missed'] }, 1, 0] }
+            $sum: {
+              $cond: [{ $eq: ['$status', 'Missed'] }, 1, 0]
+            }
           },
           takenCount: {
-            $sum: { $cond: [{ $eq: ['$status', 'Taken'] }, 1, 0] }
+            $sum: {
+              $cond: [{ $eq: ['$status', 'Taken'] }, 1, 0]
+            }
           }
         }
       },
       {
         $project: {
-          medicineName: '$_id',
           _id: 0,
+          medicineName: '$_id',
           totalCount: 1,
           missedCount: 1,
           takenCount: 1,
           missRate: {
             $round: [
-              { $multiply: [{ $divide: ['$missedCount', '$totalCount'] }, 100] },
+              {
+                $multiply: [
+                  {
+                    $divide: ['$missedCount', '$totalCount']
+                  },
+                  100
+                ]
+              },
               2
             ]
           }
         }
       },
-      { $sort: { missedCount: -1 } },
-      { $limit: 10 }
+      {
+        $sort: {
+          missedCount: -1
+        }
+      },
+      {
+        $limit: 10
+      }
     ]);
 
     res.status(200).json({
@@ -226,6 +297,9 @@ exports.getMostMissedMedicines = async (req, res) => {
       data: result
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };

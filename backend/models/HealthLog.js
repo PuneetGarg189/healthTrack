@@ -3,6 +3,12 @@ const mongoose = require('mongoose');
 // Health Log Schema with Embedded Documents and Arrays
 const healthLogSchema = new mongoose.Schema(
   {
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true
+    },
     // Reference to Patient
     patientId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -14,7 +20,11 @@ const healthLogSchema = new mongoose.Schema(
     logDate: {
       type: Date,
       required: true,
-      default: () => new Date(),
+      default: () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return today;
+      },
       index: true
     },
 
@@ -71,10 +81,29 @@ const healthLogSchema = new mongoose.Schema(
   { collection: 'healthLogs' }
 );
 
-// COMPOUND INDEX for patientId + logDate (very common query pattern)
-healthLogSchema.index({ patientId: 1, logDate: -1 });
+// Patient history
+healthLogSchema.index({
+  owner: 1,
+  patientId: 1,
+  logDate: -1
+});
 
-// Index on date for global queries
-healthLogSchema.index({ logDate: -1 });
+// User logs by date
+healthLogSchema.index({
+  owner: 1,
+  logDate: -1
+});
+
+// Prevent duplicate health log for same patient on same day
+healthLogSchema.index(
+  {
+    owner: 1,
+    patientId: 1,
+    logDate: 1
+  },
+  {
+    unique: true
+  }
+);
 
 module.exports = mongoose.model('HealthLog', healthLogSchema);

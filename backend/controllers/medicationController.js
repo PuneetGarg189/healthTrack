@@ -15,6 +15,7 @@ exports.createMedication = async (req, res) => {
 
     // CREATE: insertOne operation
     const medication = await Medication.create({
+      owner: req.user._id,
       patientId,
       medicineName,
       dosage,
@@ -46,6 +47,7 @@ exports.getMedicationsForPatient = async (req, res) => {
 
     // READ: find with patientId index
     const medications = await Medication.find({
+      owner: req.user._id,
       patientId,
       isActive: true
     }).sort({ createdAt: -1 });
@@ -68,8 +70,10 @@ exports.getMedication = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const medication = await Medication.findById(id);
-
+    const medication = await Medication.findOne({
+      _id: id,
+      owner: req.user._id
+    });
     if (!medication) {
       return res.status(404).json({ success: false, message: 'Medication not found' });
     }
@@ -93,8 +97,11 @@ exports.updateMedication = async (req, res) => {
     const { medicineName, dosage, frequency, schedule, endDate, notes, sideEffects } = req.body;
 
     // UPDATE: updateOne operation
-    const medication = await Medication.findByIdAndUpdate(
-      id,
+    const medication = await Medication.findOneAndUpdate(
+      {
+        _id: id,
+        owner: req.user._id
+      },
       {
         medicineName,
         dosage,
@@ -131,8 +138,11 @@ exports.deleteMedication = async (req, res) => {
     const { id } = req.params;
 
     // DELETE: soft delete using updateOne
-    const medication = await Medication.findByIdAndUpdate(
-      id,
+    const medication = await Medication.findOneAndUpdate(
+      {
+        _id: id,
+        owner: req.user._id
+      },
       { isActive: false, updatedAt: Date.now() },
       { new: true }
     );

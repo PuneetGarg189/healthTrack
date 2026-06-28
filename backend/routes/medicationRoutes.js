@@ -14,11 +14,12 @@ router.use(verifyToken);
 // @route POST /api/medications
 router.post('/', createMedication);
 
-// @route GET /api/medications/:patientId
-router.get('/:patientId', getMedicationsForPatient);
 
 // @route GET /api/medications/:id
 router.get('/single/:id', getMedication);
+
+// @route GET /api/medications/:patientId
+router.get('/:patientId', getMedicationsForPatient);
 
 // @route PUT /api/medications/:id
 router.put('/:id', updateMedication);

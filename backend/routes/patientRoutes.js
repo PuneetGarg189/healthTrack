@@ -21,6 +21,11 @@ router.post('/', createPatient);
 // @desc Get all patients
 router.get('/', getAllPatients);
 
+
+// @route GET /api/patients/search/:name
+// @desc Search patients
+router.get('/search/:name', searchPatients);
+
 // @route GET /api/patients/:id
 // @desc Get single patient
 router.get('/:id', getPatient);
@@ -33,8 +38,5 @@ router.put('/:id', updatePatient);
 // @desc Delete patient
 router.delete('/:id', deletePatient);
 
-// @route GET /api/patients/search/:name
-// @desc Search patients
-router.get('/search/:name', searchPatients);
 
 module.exports = router;

@@ -3,6 +3,13 @@ const mongoose = require('mongoose');
 // Patient Schema with Embedded Documents
 const patientSchema = new mongoose.Schema(
   {
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true
+    },
+
     // Basic Information
     fullName: {
       type: String,
@@ -52,7 +59,7 @@ const patientSchema = new mongoose.Schema(
       phone: {
         type: String,
         validate: {
-          validator: function(v) {
+          validator: function (v) {
             // Allow empty strings or valid 10-digit numbers
             return !v || /^\d{10}$/.test(v);
           },
@@ -112,14 +119,34 @@ const patientSchema = new mongoose.Schema(
   { collection: 'patients' }
 );
 
-// INDEXES for better query performance
-// Index on date range queries (if needed)
-patientSchema.index({ createdAt: -1 });
+// ==================== INDEXES ====================
 
-// Index on active patients
-patientSchema.index({ isActive: 1 });
+// Find all patients of a user
+patientSchema.index({
+  owner: 1,
+  isActive: 1
+});
 
-// Common search fields
-patientSchema.index({ fullName: 'text' });
+// Search patients by name
+patientSchema.index({
+  owner: 1,
+  fullName: "text"
+});
 
+// Sort by creation date
+patientSchema.index({
+  owner: 1,
+  createdAt: -1
+});
+
+// Fast lookup by owner + patient name
+patientSchema.index({
+  owner: 1,
+  fullName: 1
+});
+
+patientSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
 module.exports = mongoose.model('Patient', patientSchema);

@@ -14,11 +14,12 @@ router.use(verifyToken);
 // @route POST /api/logs
 router.post('/', createHealthLog);
 
+// @route GET /api/logs/single/:id
+router.get('/single/:id', getHealthLog);
+
 // @route GET /api/logs/:patientId
 router.get('/:patientId', getLogsForPatient);
 
-// @route GET /api/logs/single/:id
-router.get('/single/:id', getHealthLog);
 
 // @route PUT /api/logs/:id
 router.put('/:id', updateHealthLog);

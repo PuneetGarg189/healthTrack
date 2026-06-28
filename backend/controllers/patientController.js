@@ -19,6 +19,7 @@ exports.createPatient = async (req, res) => {
 
     // CREATE: insertOne operation
     const patient = await Patient.create({
+      owner: req.user._id,
       fullName,
       age,
       gender,
@@ -47,8 +48,10 @@ exports.createPatient = async (req, res) => {
 exports.getAllPatients = async (req, res) => {
   try {
     // READ: find operation
-    const patients = await Patient.find({ isActive: true });
-
+    const patients = await Patient.find({
+      owner: req.user._id,
+      isActive: true
+    });
     res.status(200).json({
       success: true,
       count: patients.length,
@@ -68,7 +71,10 @@ exports.getPatient = async (req, res) => {
     const { id } = req.params;
 
     // READ: find operation with specific id
-    const patient = await Patient.findById(id);
+    const patient = await Patient.findOne({
+      _id: id,
+      owner: req.user._id
+    });
 
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Patient not found' });
@@ -90,11 +96,23 @@ exports.getPatient = async (req, res) => {
 exports.updatePatient = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullName, age, gender, contact, address, condition, emergencyContact, healthProfile, insuranceDetails } = req.body;
+    const {
+      fullName,
+      age,
+      gender,
+      contact,
+      address,
+      condition,
+      emergencyContact,
+      healthProfile,
+      insuranceDetails
+    } = req.body;
 
-    // UPDATE: updateOne operation
-    const patient = await Patient.findByIdAndUpdate(
-      id,
+    const patient = await Patient.findOneAndUpdate(
+      {
+        _id: id,
+        owner: req.user._id
+      },
       {
         fullName,
         age,
@@ -107,11 +125,17 @@ exports.updatePatient = async (req, res) => {
         insuranceDetails,
         updatedAt: Date.now()
       },
-      { new: true, runValidators: true }
+      {
+        new: true,
+        runValidators: true
+      }
     );
 
     if (!patient) {
-      return res.status(404).json({ success: false, message: 'Patient not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Patient not found'
+      });
     }
 
     res.status(200).json({
@@ -120,7 +144,10 @@ exports.updatePatient = async (req, res) => {
       data: patient
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
@@ -132,20 +159,35 @@ exports.deletePatient = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const patient = await Patient.findById(id);
+    const patient = await Patient.findOne({
+      _id: id,
+      owner: req.user._id
+    });
+
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Patient not found' });
     }
 
     // DELETE: cascade related data, then delete the patient
     const [medicationsResult, logsResult, complianceResult] = await Promise.all([
-      Medication.deleteMany({ patientId: id }),
-      HealthLog.deleteMany({ patientId: id }),
-      MedicineCompliance.deleteMany({ patientId: id })
+      Medication.deleteMany({
+        owner: req.user._id,
+        patientId: id
+      }),
+      HealthLog.deleteMany({
+        owner: req.user._id,
+        patientId: id
+      }),
+      MedicineCompliance.deleteMany({
+        owner: req.user._id,
+        patientId: id
+      })
     ]);
 
-    await Patient.findByIdAndDelete(id);
-
+    await Patient.findOneAndDelete({
+      _id: id,
+      owner: req.user._id
+    });
     res.status(200).json({
       success: true,
       message: 'Patient and related data deleted successfully',
@@ -171,12 +213,11 @@ exports.searchPatients = async (req, res) => {
   try {
     const { name } = req.params;
 
-    const patients = await Patient.find(
-      {
-        fullName: { $regex: name, $options: 'i' },
-        isActive: true
-      }
-    );
+    const patients = await Patient.find({
+      owner: req.user._id,
+      fullName: { $regex: name, $options: 'i' },
+      isActive: true
+    });
 
     res.status(200).json({
       success: true,

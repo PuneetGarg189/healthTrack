@@ -4,6 +4,12 @@ const mongoose = require('mongoose');
 // Track daily medicine adherence: Taken or Missed
 const medicineComplianceSchema = new mongoose.Schema(
   {
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true
+    },
     // Reference to Patient
     patientId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -59,13 +65,36 @@ const medicineComplianceSchema = new mongoose.Schema(
 );
 
 // INDEXES
-// Compound index: patientId + logDate for finding compliance on a specific date
-medicineComplianceSchema.index({ patientId: 1, logDate: -1 });
+// Patient history
+medicineComplianceSchema.index({
+  owner: 1,
+  patientId: 1,
+  logDate: -1
+});
 
-// Index for medication compliance
-medicineComplianceSchema.index({ medicationId: 1, logDate: -1 });
+// Medication history
+medicineComplianceSchema.index({
+  owner: 1,
+  medicationId: 1,
+  logDate: -1
+});
 
-// Index for compliance reports
-medicineComplianceSchema.index({ patientId: 1, status: 1, logDate: -1 });
+// Compliance analytics
+medicineComplianceSchema.index({
+  owner: 1,
+  patientId: 1,
+  status: 1,
+  logDate: -1
+});
 
+medicineComplianceSchema.index(
+  {
+    owner: 1,
+    medicationId: 1,
+    logDate: 1
+  },
+  {
+    unique: true
+  }
+);
 module.exports = mongoose.model('MedicineCompliance', medicineComplianceSchema);

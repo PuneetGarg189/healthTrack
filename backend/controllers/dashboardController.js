@@ -11,8 +11,10 @@ const mongoose = require('mongoose');
 // DEMONSTRATES: Multiple AGGREGATION PIPELINES for global analytics
 exports.getGlobalDashboard = async (req, res) => {
   try {
-    const activePatients = await Patient.find({ isActive: true }).select('_id');
-    const activePatientIds = activePatients.map((patient) => patient._id);
+    const activePatients = await Patient.find({
+      owner: req.user._id,
+      isActive: true
+    }).select('_id'); const activePatientIds = activePatients.map((patient) => patient._id);
     if (activePatientIds.length === 0) {
       return res.status(200).json({
         success: true,
@@ -39,14 +41,18 @@ exports.getGlobalDashboard = async (req, res) => {
     const stats = await Promise.all([
       // Total Active Patients
       Promise.resolve(activePatientIds.length),
-      
+
       // Total Active Medications
-      Medication.countDocuments({ isActive: true, patientId: { $in: activePatientIds } }),
-      
+      Medication.countDocuments({
+        owner: req.user._id,
+        isActive: true,
+        patientId: { $in: activePatientIds }
+      }),
       // Overall Compliance Rate (Aggregation Pipeline)
       MedicineCompliance.aggregate([
         {
           $match: {
+            owner: req.user._id,
             patientId: { $in: activePatientIds }
           }
         },
@@ -83,6 +89,7 @@ exports.getGlobalDashboard = async (req, res) => {
     const complianceData = await MedicineCompliance.aggregate([
       {
         $match: {
+          owner: req.user._id,
           patientId: { $in: activePatientIds }
         }
       },
@@ -108,6 +115,7 @@ exports.getGlobalDashboard = async (req, res) => {
     const dailyTrend = await MedicineCompliance.aggregate([
       {
         $match: {
+          owner: req.user._id,
           logDate: { $gte: startDate },
           patientId: { $in: activePatientIds }
         }
@@ -132,6 +140,7 @@ exports.getGlobalDashboard = async (req, res) => {
     const mostMissed = await MedicineCompliance.aggregate([
       {
         $match: {
+          owner: req.user._id,
           logDate: { $gte: startDate },
           patientId: { $in: activePatientIds }
         }
@@ -150,10 +159,24 @@ exports.getGlobalDashboard = async (req, res) => {
       },
       {
         $lookup: {
-          from: 'medications',
-          localField: '_id',
-          foreignField: 'medicineName',
-          as: 'medicineDetails'
+          from: "medications",
+          let: {
+            medicine: "$_id",
+            owner: req.user._id
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$medicineName", "$$medicine"] },
+                    { $eq: ["$owner", "$$owner"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "medicineDetails"
         }
       },
       {
@@ -187,6 +210,7 @@ exports.getGlobalDashboard = async (req, res) => {
     const medicinesSummary = await MedicineCompliance.aggregate([
       {
         $match: {
+          owner: req.user._id,
           patientId: { $in: activePatientIds }
         }
       },
@@ -204,10 +228,24 @@ exports.getGlobalDashboard = async (req, res) => {
       },
       {
         $lookup: {
-          from: 'medications',
-          localField: '_id',
-          foreignField: 'medicineName',
-          as: 'medicineDetails'
+          from: "medications",
+          let: {
+            medicine: "$_id",
+            owner: req.user._id
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$medicineName", "$$medicine"] },
+                    { $eq: ["$owner", "$$owner"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "medicineDetails"
         }
       },
       {
@@ -241,23 +279,30 @@ exports.getGlobalDashboard = async (req, res) => {
     const recentLogs = await HealthLog.aggregate([
       {
         $match: {
-          logDate: { $gte: startDate },
+          owner: req.user._id,
           patientId: { $in: activePatientIds }
         }
       },
       {
         $lookup: {
-          from: 'patients',
-          localField: 'patientId',
-          foreignField: '_id',
-          as: 'patient'
+          from: "patients",
+          localField: "patientId",
+          foreignField: "_id",
+          as: "patient"
         }
       },
       {
-        $unwind: '$patient'
+        $unwind: "$patient"
       },
       {
-        $sort: { logDate: -1 }
+        $match: {
+          "patient.owner": req.user._id
+        }
+      },
+      {
+        $sort: {
+          logDate: -1
+        }
       },
       {
         $limit: 20
@@ -267,7 +312,9 @@ exports.getGlobalDashboard = async (req, res) => {
     // AGGREGATION 7: Patient statistics by condition
     const patientsByCondition = await Patient.aggregate([
       {
-        $match: { isActive: true }
+        $match: {
+          isActive: true, owner: req.user._id
+        }
       },
       {
         $group: {
@@ -318,7 +365,10 @@ exports.getPatientAnalytics = async (req, res) => {
     startDate.setDate(startDate.getDate() - parseInt(days));
 
     // Get patient details
-    const patient = await Patient.findById(patientId);
+    const patient = await Patient.findOne({
+      _id: patientId,
+      owner: req.user._id
+    });
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Patient not found' });
     }
@@ -327,6 +377,8 @@ exports.getPatientAnalytics = async (req, res) => {
     const complianceSummary = await MedicineCompliance.aggregate([
       {
         $match: {
+          owner: req.user._id,
+
           patientId: patientObjId,
           logDate: { $gte: startDate }
         }
@@ -367,6 +419,8 @@ exports.getPatientAnalytics = async (req, res) => {
     const complianceChart = await MedicineCompliance.aggregate([
       {
         $match: {
+          owner: req.user._id,
+
           patientId: patientObjId,
           logDate: { $gte: startDate }
         }
@@ -383,6 +437,8 @@ exports.getPatientAnalytics = async (req, res) => {
     const weeklyAdherence = await MedicineCompliance.aggregate([
       {
         $match: {
+          owner: req.user._id,
+
           patientId: patientObjId,
           logDate: { $gte: startDate }
         }
@@ -424,7 +480,8 @@ exports.getPatientAnalytics = async (req, res) => {
       {
         $match: {
           patientId: patientObjId,
-          logDate: { $gte: startDate }
+          logDate: { $gte: startDate },
+          owner: req.user._id
         }
       },
       {
@@ -448,6 +505,8 @@ exports.getPatientAnalytics = async (req, res) => {
     const moodTrend = await HealthLog.aggregate([
       {
         $match: {
+          owner: req.user._id,
+
           patientId: patientObjId,
           logDate: { $gte: startDate },
           'vitals.mood': { $exists: true }
@@ -467,7 +526,8 @@ exports.getPatientAnalytics = async (req, res) => {
         $match: {
           patientId: patientObjId,
           status: 'Missed',
-          logDate: { $gte: startDate }
+          logDate: { $gte: startDate },
+          owner: req.user._id
         }
       },
       {
@@ -481,6 +541,7 @@ exports.getPatientAnalytics = async (req, res) => {
 
     // Get active medicines
     const activeMedicines = await Medication.find({
+      owner: req.user._id,
       patientId,
       isActive: true
     });

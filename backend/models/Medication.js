@@ -3,6 +3,12 @@ const mongoose = require('mongoose');
 // Medication Schema with Embedded Documents
 const medicationSchema = new mongoose.Schema(
   {
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true
+    },
     // Reference to Patient
     patientId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -88,14 +94,37 @@ const medicationSchema = new mongoose.Schema(
   { collection: 'medications' }
 );
 
-// INDEXES
-// Index on patientId for finding all medicines of a patient
-medicationSchema.index({ patientId: 1 });
+// ==================== INDEXES ====================
 
-// Compound index for patientId + active status
-medicationSchema.index({ patientId: 1, isActive: 1 });
+// Find all medications for a patient's account
+medicationSchema.index({
+  owner: 1,
+  patientId: 1
+});
 
-// Index for date range queries
-medicationSchema.index({ startDate: 1, endDate: 1 });
+// Find active medications of a patient
+medicationSchema.index({
+  owner: 1,
+  patientId: 1,
+  isActive: 1
+});
+
+// Date range queries
+medicationSchema.index({
+  owner: 1,
+  startDate: 1,
+  endDate: 1
+});
+
+// Search medicine names
+medicationSchema.index({
+  owner: 1,
+  medicineName: "text"
+});
+
+medicationSchema.pre("save", function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
 module.exports = mongoose.model('Medication', medicationSchema);

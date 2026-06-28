@@ -15,6 +15,7 @@ exports.createHealthLog = async (req, res) => {
 
     // CREATE: insertOne operation
     const healthLog = await HealthLog.create({
+        owner: req.user._id,
       patientId,
       logDate: logDate || new Date(),
       vitals: vitals || {},
@@ -47,6 +48,8 @@ exports.getLogsForPatient = async (req, res) => {
 
     // READ: find with compound index (patientId, logDate)
     const logs = await HealthLog.find({
+        owner: req.user._id,
+
       patientId,
       logDate: { $gte: startDate }
     }).sort({ logDate: -1 });
@@ -69,8 +72,10 @@ exports.getHealthLog = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const log = await HealthLog.findById(id);
-
+const log = await HealthLog.findOne({
+  _id: id,
+  owner: req.user._id
+});
     if (!log) {
       return res.status(404).json({ success: false, message: 'Health log not found' });
     }
@@ -94,8 +99,11 @@ exports.updateHealthLog = async (req, res) => {
     const { vitals, symptoms, notes, temperature } = req.body;
 
     // UPDATE: updateOne operation
-    const log = await HealthLog.findByIdAndUpdate(
-      id,
+    const log = await HealthLog.findOneAndUpdate(
+  {
+    _id: id,
+    owner: req.user._id
+  },
       {
         vitals,
         symptoms,
@@ -128,7 +136,10 @@ exports.deleteHealthLog = async (req, res) => {
     const { id } = req.params;
 
     // DELETE: deleteOne operation
-    const log = await HealthLog.findByIdAndDelete(id);
+    const log = await HealthLog.findOneAndDelete({
+      _id: id,
+      owner: req.user._id
+    });
 
     if (!log) {
       return res.status(404).json({ success: false, message: 'Health log not found' });
