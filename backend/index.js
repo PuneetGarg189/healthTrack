@@ -7,7 +7,7 @@ dotenv.config();
 
 const app = express();
 
-// Connect to MongoDB
+// Connect MongoDB
 connectDB();
 
 // Middleware
@@ -23,26 +23,33 @@ app.use('/api/logs', require('./routes/healthLogRoutes'));
 app.use('/api/compliance', require('./routes/complianceRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
-// Health check
+// Health Check
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ success: true, message: 'Server is running' });
+  res.status(200).json({
+    success: true,
+    message: 'Server is running'
+  });
 });
 
-// Error handling middleware
+// Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
+
   res.status(500).json({
     success: false,
     message: err.message || 'Internal server error'
   });
 });
 
-const PORT = process.env.PORT || 5000;
+// Start server only when running locally
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
-  console.log(`\n✓ Server running on port ${PORT}`);
-  console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`✓ API Base URL: http://localhost:${PORT}/api\n`);
-});
+  app.listen(PORT, () => {
+    console.log(`✓ Server running on port ${PORT}`);
+    console.log(`✓ API: http://localhost:${PORT}/api`);
+  });
+}
 
-module.exports = server;
+// Export app for Vercel
+module.exports = app;
