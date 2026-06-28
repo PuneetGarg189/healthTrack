@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "HealthTrack - Personal Health Analytics System Frontend",
   "private": true,
-  "proxy": "https://healthtrack-uc4q.onrender.com",
+  "proxy": "https://health-track-rsac.vercel.app",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
