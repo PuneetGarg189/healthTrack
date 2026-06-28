@@ -81,7 +81,7 @@ export const MedicineScheduleOverview = () => {
   return (
     <div className="medicine-schedule-page">
       <Sidebar />
-      <main className="main-content">
+      <main className="schedule-main-content">
         <div className="page-header">
           <h1>Medicine Schedule Overview</h1>
           <p>View and manage medicine schedules for all patients</p>
