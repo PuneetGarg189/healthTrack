@@ -141,7 +141,6 @@ exports.getGlobalDashboard = async (req, res) => {
       {
         $match: {
           owner: req.user._id,
-          logDate: { $gte: startDate },
           patientId: { $in: activePatientIds }
         }
       },
@@ -155,6 +154,11 @@ exports.getGlobalDashboard = async (req, res) => {
             $sum: { $cond: [{ $eq: ['$status', 'Taken'] }, 1, 0] }
           },
           totalCount: { $sum: 1 }
+        }
+      },
+      {
+        $match: {
+          missCount: { $gt: 0 }
         }
       },
       {
@@ -202,7 +206,7 @@ exports.getGlobalDashboard = async (req, res) => {
           }
         }
       },
-      { $sort: { missCount: -1 } },
+      { $sort: { missCount: -1, missRate: -1 } },
       { $limit: 5 }
     ]);
 

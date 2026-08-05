@@ -8,15 +8,27 @@ import '../styles/Patients.css';
 export const Patients = () => {
   const [activeView, setActiveView] = useState('list');
   const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [editingPatient, setEditingPatient] = useState(null);
 
   const handlePatientSelect = (patientId) => {
     setSelectedPatientId(patientId);
     setActiveView('profile');
   };
 
+  const handleEditPatient = (patient) => {
+    setEditingPatient(patient);
+    setActiveView('form');
+  };
+
   const handleBack = () => {
     setActiveView('list');
     setSelectedPatientId(null);
+    setEditingPatient(null);
+  };
+
+  const handleFormDone = () => {
+    setActiveView('list');
+    setEditingPatient(null);
   };
 
   return (
@@ -26,14 +38,25 @@ export const Patients = () => {
         {activeView === 'list' && (
           <PatientList
             onPatientSelect={handlePatientSelect}
-            onAddClick={() => setActiveView('form')}
+            onEditClick={handleEditPatient}
+            onAddClick={() => {
+              setEditingPatient(null);
+              setActiveView('form');
+            }}
           />
         )}
         {activeView === 'form' && (
-          <PatientForm onPatientAdded={() => setActiveView('list')} />
+          <PatientForm
+            existingPatient={editingPatient}
+            onPatientAdded={handleFormDone}
+          />
         )}
         {activeView === 'profile' && (
-          <PatientProfile patientId={selectedPatientId} onBack={handleBack} />
+          <PatientProfile
+            patientId={selectedPatientId}
+            onBack={handleBack}
+            onEdit={handleEditPatient}
+          />
         )}
       </main>
     </div>

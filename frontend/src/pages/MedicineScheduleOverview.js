@@ -6,6 +6,14 @@ import '../styles/MedicineScheduleOverview.css';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://health-track-tlss.vercel.app/api';
 
+// Helper for avatar initials
+const getInitials = (name) => {
+  if (!name) return 'P';
+  const parts = name.trim().split(' ');
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
 export const MedicineScheduleOverview = () => {
   const navigate = useNavigate();
   const { patients, fetchPatients } = useContext(DataContext);
@@ -68,9 +76,9 @@ export const MedicineScheduleOverview = () => {
 
   const getScheduleDisplay = (medicine) => {
     const times = [];
-    if (medicine.schedule?.morning) times.push('Morning (8 AM)');
-    if (medicine.schedule?.afternoon) times.push('Afternoon (2 PM)');
-    if (medicine.schedule?.night) times.push('Night (8 PM)');
+    if (medicine.schedule?.morning) times.push('🌅 Morning');
+    if (medicine.schedule?.afternoon) times.push('☀️ Afternoon');
+    if (medicine.schedule?.night) times.push('🌙 Night');
     return times;
   };
 
@@ -79,107 +87,113 @@ export const MedicineScheduleOverview = () => {
   };
 
   return (
-    <div className="medicine-schedule-page">
+    <div className="app-layout">
       <Sidebar />
-      <main className="schedule-main-content">
-        <div className="page-header">
-          <h1>Medicine Schedule Overview</h1>
-          <p>View and manage medicine schedules for all patients</p>
-        </div>
-
-        <div className="schedule-search">
-          <input
-            type="text"
-            placeholder="Search patients..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-        </div>
-
-        {loading && (
-          <div className="no-patients">
-            <p>Loading schedules...</p>
+      <main className="main-content">
+        <div className="schedule-overview-container">
+          <div className="page-header">
+            <div>
+              <h1 className="page-title">Medicine Schedule Overview</h1>
+              <p className="page-subtitle">Monitor daily intake timelines, active prescription schedules, and dose timings</p>
+            </div>
           </div>
-        )}
 
-        {error && (
-          <div className="no-patients">
-            <p>{error}</p>
+          <div className="search-bar-wrapper">
+            <div className="search-input-box">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder="Search patient schedules by name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button className="clear-search-btn" onClick={() => setSearchTerm('')}>✕</button>
+              )}
+            </div>
           </div>
-        )}
 
-        {!loading && !error && filteredPatients.length > 0 ? (
-          <div className="patients-schedules">
-            {filteredPatients.map(patient => {
-              const patientMeds = getPatientMedicines(patient._id);
-              return (
-                <div key={patient._id} className="patient-schedule-card">
-                  <div className="card-header">
-                    <h3>{patient.fullName}</h3>
-                    <span className="medicine-count">
-                      {patientMeds.length} medicines
-                    </span>
-                  </div>
+          {loading && (
+            <div className="loading">Loading patient medicine schedules...</div>
+          )}
 
-                  <div className="patient-info">
-                    <div className="info-item">
-                      <span className="label">Age:</span>
-                      <span className="value">{patient.age} years</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="label">Condition:</span>
-                      <span className="value">{patient.condition}</span>
-                    </div>
-                  </div>
+          {error && (
+            <div className="error">Error loading schedules: {error}</div>
+          )}
 
-                  {patientMeds.length > 0 ? (
-                    <div className="medicines-preview">
-                      <h4>Active Medicines</h4>
-                      <div className="medicines-list-preview">
-                        {patientMeds.slice(0, 3).map(med => (
-                          <div key={med._id} className="medicine-preview-item">
-                            <div className="med-info">
-                              <div className="med-name">{med.medicineName}</div>
-                              <div className="med-dosage">{med.dosage}</div>
-                            </div>
-                            <div className="schedule-times">
-                              {getScheduleDisplay(med).map((time, idx) => (
-                                <span key={idx} className="time-badge">
-                                  {time.split(' ')[0]}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                        {patientMeds.length > 3 && (
-                          <div className="more-medicines">
-                            +{patientMeds.length - 3} more
-                          </div>
-                        )}
+          {!loading && !error && filteredPatients.length > 0 ? (
+            <div className="patients-schedules-grid">
+              {filteredPatients.map(patient => {
+                const patientMeds = getPatientMedicines(patient._id);
+                const initials = getInitials(patient.fullName);
+
+                return (
+                  <div key={patient._id} className="patient-schedule-card">
+                    <div className="card-top-header">
+                      <div className="avatar-initials-badge">{initials}</div>
+                      <div className="patient-main-info">
+                        <h3 className="patient-name">{patient.fullName}</h3>
+                        <span className="patient-condition-badge">🩺 {patient.condition || 'General Care'}</span>
                       </div>
+                      <span className="med-count-pill">
+                        {patientMeds.length} Medicine{patientMeds.length !== 1 ? 's' : ''}
+                      </span>
                     </div>
-                  ) : (
-                    <div className="no-medicines">
-                      No medicines assigned
-                    </div>
-                  )}
 
-                  <button
-                    className="view-details-btn"
-                    onClick={() => handlePatientClick(patient._id)}
-                  >
-                    View Full Schedule →
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="no-patients">
-            <p>No patients found</p>
-          </div>
-        )}
+                    <div className="patient-meta-row">
+                      <span className="meta-item">Age: <strong>{patient.age} yrs</strong></span>
+                      <span className="meta-item">Blood: <strong>🩸 {patient.healthProfile?.bloodGroup || 'O+'}</strong></span>
+                    </div>
+
+                    {patientMeds.length > 0 ? (
+                      <div className="medicines-preview-box">
+                        <div className="preview-heading">Active Prescriptions</div>
+                        <div className="medicines-preview-list">
+                          {patientMeds.slice(0, 3).map(med => (
+                            <div key={med._id} className="medicine-preview-row">
+                              <div className="med-title-dosage">
+                                <span className="med-pill-icon">💊</span>
+                                <div>
+                                  <div className="med-preview-name">{med.medicineName}</div>
+                                  <div className="med-preview-dosage">{med.dosage}</div>
+                                </div>
+                              </div>
+                              <div className="schedule-pills-row">
+                                {getScheduleDisplay(med).map((time, idx) => (
+                                  <span key={idx} className="time-pill-badge">{time}</span>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                          {patientMeds.length > 3 && (
+                            <div className="more-medicines-tag">
+                              +{patientMeds.length - 3} more prescription{patientMeds.length - 3 > 1 ? 's' : ''}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="no-medicines-notice">
+                        <span>ℹ️ No active prescriptions assigned</span>
+                      </div>
+                    )}
+
+                    <button
+                      className="btn-view-schedule"
+                      onClick={() => handlePatientClick(patient._id)}
+                    >
+                      View Full Schedule <span className="arrow-icon">→</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            !loading && (
+              <div className="empty-state">No matching patient schedules found</div>
+            )
+          )}
+        </div>
       </main>
     </div>
   );

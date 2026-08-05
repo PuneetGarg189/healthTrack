@@ -1,345 +1,308 @@
-/* Medicine Schedule Overview Page Styles */
+/* ==========================================================================
+   CLINICAL MEDICINE SCHEDULE OVERVIEW STYLES
+   ========================================================================== */
 
-.medicine-schedule-page {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-  position: relative;
+.schedule-overview-container {
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
-.schedule-main-content {
-  margin-left: 260px;
-  flex: 1;
-  width: calc(100% - 260px);
-  min-width: 0;
-  overflow-y: auto;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-  background: rgba(255, 255, 255, 0.74);
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  border-left: 5px solid #14b8a6;
-}
-
-.page-header h1 {
-  margin: 0 0 0.5rem 0;
+.page-title {
+  font-family: var(--font-heading);
   font-size: 2.1rem;
   color: #0f172a;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.25rem;
 }
 
-.page-header p {
-  margin: 0;
+.page-subtitle {
   color: #64748b;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-.schedule-search {
+/* Search Bar */
+.search-bar-wrapper {
   margin-bottom: 2rem;
 }
 
-.search-input {
+.search-input-box {
+  position: relative;
+  max-width: 500px;
+}
+
+.search-input-box .search-icon {
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #94a3b8;
+}
+
+.search-input-box input {
   width: 100%;
-  max-width: 400px;
-  padding: 0.85rem 1.1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 9999px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.85);
-  box-sizing: border-box;
+  padding: 0.85rem 2.8rem 0.85rem 2.8rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 99px;
+  font-size: 0.925rem;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
 }
 
-.search-input:focus {
+.search-input-box input:focus {
   outline: none;
-  border-color: #14b8a6;
-  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+  border-color: #0f766e;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
-.patients-schedules {
+.clear-search-btn {
+  position: absolute;
+  right: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Grid */
+.patients-schedules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 1.5rem;
 }
 
+/* Patient Schedule Card */
 .patient-schedule-card {
-  background: rgba(255, 255, 255, 0.74);
-  border-radius: 1rem;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 18px;
   padding: 1.5rem;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  transition: all 0.3s ease;
-  border-left: 4px solid #14b8a6;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.patient-schedule-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0f766e 0%, #0284c7 100%);
 }
 
 .patient-schedule-card:hover {
-  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.12);
   transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.1);
+  border-color: #cbd5e1 !important;
 }
 
-.card-header {
+.card-top-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.25rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e2e8f0;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
 }
 
-.card-header h3 {
+.avatar-initials-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f766e 0%, #0284c7 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.patient-main-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.patient-name {
   margin: 0;
   font-size: 1.15rem;
   color: #0f172a;
-  flex: 1;
   font-weight: 800;
-  word-break: break-word;
+  letter-spacing: -0.02em;
 }
 
-.medicine-count {
-  background: #14b8a6;
-  color: white;
-  padding: 0.35rem 0.75rem;
-  border-radius: 9999px;
+.patient-condition-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f766e;
+}
+
+.med-count-pill {
+  background: #ccfbf1;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
+  padding: 0.2rem 0.65rem;
+  border-radius: 99px;
   font-size: 0.75rem;
   font-weight: 700;
   white-space: nowrap;
 }
 
-.patient-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.patient-meta-row {
+  display: flex;
   gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding: 0.85rem;
-  background: rgba(255, 255, 255, 0.55);
-  border-radius: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.65);
+  padding: 0.4rem 0.6rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #475569;
+  margin-bottom: 1.1rem;
 }
 
-.info-item {
-  display: flex;
-  flex-direction: column;
+.meta-item strong {
+  color: #0f172a;
 }
 
-.info-item .label {
-  font-weight: 600;
+/* Medicines Preview Box */
+.medicines-preview-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.preview-heading {
+  font-size: 0.725rem;
+  font-weight: 700;
   color: #64748b;
-  font-size: 0.75rem;
   text-transform: uppercase;
-  margin-bottom: 0.3rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.65rem;
 }
 
-.info-item .value {
-  color: #1e293b;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.medicines-preview {
-  margin-bottom: 1.5rem;
-  flex: 1;
-}
-
-.medicines-preview h4 {
-  margin: 0 0 0.85rem 0;
-  font-size: 0.9rem;
-  color: #1e293b;
-  font-weight: 700;
-}
-
-.medicines-list-preview {
+.medicines-preview-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
-.medicine-preview-item {
+.medicine-preview-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.6rem 0.85rem;
-  background: rgba(255, 255, 255, 0.68);
-  border-radius: 0.85rem;
-  font-size: 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.65);
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.medicine-preview-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.med-title-dosage {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
-.med-info {
-  flex: 1;
-  min-width: 0;
+.med-pill-icon {
+  font-size: 1rem;
 }
 
-.med-name {
+.med-preview-name {
+  font-size: 0.875rem;
   font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 0.15rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #0f172a;
 }
 
-.med-dosage {
+.med-preview-dosage {
+  font-size: 0.75rem;
   color: #64748b;
-  font-size: 0.7rem;
 }
 
-.schedule-times {
+.schedule-pills-row {
   display: flex;
-  gap: 0.3rem;
+  gap: 0.25rem;
   flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
-.time-badge {
-  background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
-  color: white;
-  padding: 0.2rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.65rem;
+.time-pill-badge {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+  font-size: 0.725rem;
   font-weight: 700;
-  white-space: nowrap;
 }
 
-.more-medicines {
-  padding: 0.6rem 0.85rem;
-  color: #14b8a6;
-  font-weight: 600;
-  font-size: 0.8rem;
+.more-medicines-tag {
+  font-size: 0.75rem;
+  color: #0f766e;
+  font-weight: 700;
   text-align: center;
-  background: rgba(240, 253, 250, 0.9);
-  border-radius: 0.85rem;
-  border: 1px solid rgba(20, 184, 166, 0.18);
+  margin-top: 0.35rem;
 }
 
-.no-medicines {
-  padding: 15px;
-  background: rgba(255, 247, 237, 0.82);
-  border-radius: 0.85rem;
-  color: #9a3412;
-  font-size: 12px;
+.no-medicines-notice {
+  background: #f1f5f9;
+  padding: 0.85rem;
+  border-radius: 10px;
+  font-size: 0.825rem;
+  color: #64748b;
   text-align: center;
-  margin-bottom: 20px;
-  font-weight: 600;
+  margin-bottom: 1.25rem;
 }
 
-.view-details-btn {
+/* Button */
+.btn-view-schedule {
+  margin-top: auto;
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #14b8a6, #0d9488);
-  color: white;
+  background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+  color: #ffffff;
   border: none;
-  border-radius: 9999px;
-  font-size: 14px;
+  padding: 0.75rem 1rem;
+  border-radius: 99px;
+  font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: auto;
-  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+  transition: all 0.25s ease;
 }
 
-.view-details-btn:hover {
-  background: linear-gradient(135deg, #0d9488, #0f766e);
-  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
-  transform: translateY(-2px);
+.btn-view-schedule .arrow-icon {
+  transition: transform 0.2s ease;
 }
 
-.no-patients {
-  background: rgba(255, 255, 255, 0.74);
-  padding: 60px 30px;
-  border-radius: 1rem;
-  text-align: center;
-  color: #64748b;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  font-weight: 600;
+.patient-schedule-card:hover .btn-view-schedule {
+  background: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+  box-shadow: 0 6px 16px rgba(13, 148, 136, 0.3);
 }
 
-/* Responsive Media Queries */
-@media (max-width: 1024px) {
-  .medicine-schedule-page {
-    display: block;
-  }
-
-  .schedule-main-content {
-    margin-left: 0;
-    width: 100%;
-    padding: 1.5rem;
-    padding-top: 80px;
-  }
+.patient-schedule-card:hover .btn-view-schedule .arrow-icon {
+  transform: translateX(4px);
 }
 
 @media (max-width: 768px) {
-  .page-header {
-    padding: 1.25rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .page-header h1 {
-    font-size: 1.5rem;
-    line-height: 1.3;
-  }
-
-  .search-input {
-    max-width: 100%;
-  }
-
-  .patients-schedules {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
-  .patient-schedule-card {
-    padding: 1.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .schedule-main-content {
-    padding: 1rem;
-    padding-top: 74px;
-  }
-
-  .page-header {
-    padding: 1rem;
-  }
-
-  .page-header h1 {
-    font-size: 1.25rem;
-  }
-
-  .card-header h3 {
-    font-size: 1rem;
-  }
-
-  .patient-info {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-
-  .medicine-preview-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .schedule-times {
-    justify-content: flex-start;
-    margin-top: 0.25rem;
-  }
+  .page-title { font-size: 1.6rem; }
+  .patients-schedules-grid { grid-template-columns: 1fr; }
 }

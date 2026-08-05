@@ -1,497 +1,430 @@
-/* Global Dashboard Styles */
+/* ==========================================================================
+   CLINICAL GLOBAL DASHBOARD STYLES
+   ========================================================================== */
+
 .dashboard-container {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  position: relative;
-  isolation: isolate;
 }
 
-.dashboard-container::before {
-  content: '';
-  position: absolute;
-  inset: -2rem;
-  z-index: -2;
-  background:
-    radial-gradient(circle at top left, rgba(239, 68, 68, 0.12), transparent 35%),
-    radial-gradient(circle at top right, rgba(20, 184, 166, 0.12), transparent 32%),
-    linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-}
-
-.dashboard-container::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image: linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent 95%);
+.dashboard-header {
+  margin-bottom: 1.75rem;
 }
 
 .dashboard-title {
-  font-size: 2.35rem;
+  font-family: var(--font-heading);
+  font-size: 2rem;
   color: #0f172a;
-  margin-bottom: 2rem;
   font-weight: 800;
-  letter-spacing: -0.04em;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.25rem;
 }
 
-.dashboard-title::before {
-  content: '';
-  width: 4px;
-  height: 32px;
-  background: #14b8a6;
-  border-radius: 2px;
+.dashboard-subtitle {
+  color: #64748b;
+  font-size: 0.925rem;
 }
 
 /* Statistics Cards Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.25rem;
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.74) !important;
-  border-radius: 1.1rem;
-  padding: 1.6rem;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: #14b8a6;
-  border-radius: 1.1rem 1.1rem 0 0;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  transition: all 0.25s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.09);
+  border-color: #cbd5e1 !important;
 }
 
-.stat-value {
-  font-size: 2.45rem;
+.stat-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.stat-card-patients .stat-icon-box { background: #eff6ff; color: #2563eb; }
+.stat-card-meds .stat-icon-box { background: #ecfdf5; color: #059669; }
+.stat-card-compliance .stat-icon-box { background: #fffbeb; color: #d97706; }
+.stat-card-doses .stat-icon-box { background: #eef2ff; color: #4f46e5; }
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-number {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
   font-weight: 800;
-  color: #16a34a !important;
-  margin-bottom: 0.4rem;
-  text-shadow: none;
-  letter-spacing: -0.03em;
+  color: #0f172a !important;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.stat-label {
-  font-size: 0.78rem;
-  color: #64748b;
+.stat-title {
+  font-size: 0.725rem;
+  color: #64748b !important;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.05em;
+  margin-top: 0.2rem;
 }
 
 /* Charts Section */
 .charts-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.75rem;
+  margin-bottom: 2.25rem;
 }
 
 .chart-card {
-  background: rgba(255, 255, 255, 0.74);
-  border-radius: 1.1rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
   padding: 1.75rem;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.chart-card:hover {
-  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.12);
-}
-
-.chart-card h2 {
-  font-size: 1.35rem;
-  color: #111827;
-  margin-bottom: 1.4rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.chart-card h2::before {
-  content: '';
-  width: 4px;
-  height: 24px;
-  border-radius: 9999px;
-  background: linear-gradient(180deg, #14b8a6 0%, #ef4444 100%);
-}
-
-/* Pie Chart Styles */
-.pie-chart {
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
 }
 
-.chart-item {
+.chart-card-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.05rem;
-  background: rgba(255, 255, 255, 0.55);
-  border-radius: 0.85rem;
-  border-left: 3px solid #16a34a;
-  transition: all 0.2s ease;
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.65);
-}
-
-.chart-item:hover {
-  background: rgba(255, 255, 255, 0.78);
-  transform: translateX(4px);
-}
-
-.status-badge {
-  padding: 0.4rem 0.8rem;
-  border-radius: 9999px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 0.3px;
-}
-
-.status-badge.Taken {
-  background: #d1fae5;
-  color: #065f46;
-  font-size: 0.75rem;
-}
-
-.status-badge.Missed {
-  background: #fee2e2;
-  color: #991b1b;
-  font-size: 0.75rem;
-}
-
-.status-badge.Partial {
-  background: #fef3c7;
-  color: #78350f;
-  font-size: 0.75rem;
-}
-
-.chart-count {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #1a1a1a;
-}
-
-/* List Chart Styles */
-.list-chart {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.list-item {
-  display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.9rem 1rem;
-  background: rgba(255, 255, 255, 0.55);
-  border-radius: 0.85rem;
-  border-left: 3px solid #3b82f6;
-  transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  gap: 0.5rem;
-}
-
-.list-item:hover {
-  background: rgba(255, 255, 255, 0.8);
-  transform: translateX(4px);
-}
-
-.medicine-name {
-  font-weight: 700;
-  color: #1a1a1a;
-  font-size: 0.95rem;
-}
-
-.miss-rate {
-  background: rgba(255, 255, 255, 0.8);
-  color: #475569;
-  padding: 0.35rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  white-space: nowrap;
-}
-
-/* Recent Logs Section */
-.recent-logs {
-  background: rgba(255, 255, 255, 0.74);
-  border-radius: 1.1rem;
-  padding: 1.75rem;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-}
-
-.recent-logs h2 {
-  font-size: 1.25rem;
-  color: #1a1a1a;
   margin-bottom: 1.5rem;
-  font-weight: 800;
-  letter-spacing: 0;
 }
 
-.logs-table {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.log-row {
+.chart-card-header h2 {
+  font-size: 1.15rem;
+  color: #0f172a;
+  margin: 0;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem 1.05rem;
-  background: rgba(255, 255, 255, 0.55);
-  border-radius: 0.85rem;
-  border-left: 3px solid #16a34a;
-  transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.65);
+  gap: 0.6rem;
 }
 
-.log-row:hover {
-  background: rgba(255, 255, 255, 0.8);
-  transform: translateX(3px);
-}
-
-.log-patient {
-  font-weight: 700;
-  color: #1a1a1a;
-  font-size: 0.95rem;
-}
-
-.log-date {
-  color: #64748b;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.log-vitals {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  font-size: 0.8rem;
-}
-
-.log-vitals span {
-  background: rgba(255, 255, 255, 0.8);
-  padding: 0.35rem 0.75rem;
-  border-radius: 9999px;
-  color: #475569;
-  font-weight: 700;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-}
-
-/* Medicine Details Table */
-.medicine-details-table {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.22);
-}
-
-.medicine-details-table h3 {
-  font-size: 1.1rem;
-  color: #1a1a1a;
-  margin-bottom: 1.25rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-.medicine-details-table h3::before,
-.recent-logs h2::before {
+.chart-card-header h2::before {
   content: '';
   width: 4px;
   height: 20px;
-  border-radius: 9999px;
-  background: linear-gradient(180deg, #14b8a6 0%, #ef4444 100%);
+  background: #0f766e;
+  border-radius: 99px;
+}
+
+.chart-badge {
+  background: #f0fdfa;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.chart-badge.warning {
+  background: #fff1f2;
+  color: #e11d48;
+  border-color: #fecdd3;
+}
+
+/* Donut Chart Center Container */
+.donut-chart-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.donut-center-info {
+  position: absolute;
+  top: 43%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-center-value {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.donut-center-label {
+  display: block;
+  font-size: 0.725rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+/* Prescription Details Table */
+.medicine-details-table {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.medicine-details-table h3 {
+  font-size: 0.925rem;
+  color: #334155;
+  margin-bottom: 0.85rem;
+  font-weight: 700;
 }
 
 .medicines-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
 .medicine-detail-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  background: rgba(255, 255, 255, 0.55);
-  border-radius: 0.85rem;
-  border-left: 3px solid #16a34a;
-  border: 1px solid rgba(255, 255, 255, 0.65);
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.875rem;
 }
 
 .med-info {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.med-mini-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
 }
 
 .med-name {
   font-weight: 700;
-  color: #1a1a1a;
-  font-size: 0.95rem;
+  color: #0f172a;
 }
 
 .med-dosage {
-  font-size: 0.8rem;
+  font-size: 0.775rem;
   color: #64748b;
   font-weight: 600;
-}
-
-.med-frequency {
-  display: flex;
-  gap: 0.5rem;
 }
 
 .frequency-label {
-  background: rgba(255, 255, 255, 0.8);
-  color: #16a34a;
-  padding: 0.35rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.8rem;
+  background: #ccfbf1;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
+  padding: 0.2rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.775rem;
   font-weight: 700;
-  border: 1px solid rgba(226, 232, 240, 0.9);
 }
 
-.med-stats {
+.compliance-rate-pill {
+  padding: 0.2rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.775rem;
+  font-weight: 800;
+}
+
+.compliance-badge-high {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.compliance-badge-mid {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.compliance-badge-low {
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+}
+
+.no-data-text {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+/* Recent Logs */
+.recent-logs-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.recent-logs-section h2 {
+  font-size: 1.15rem;
+  color: #0f172a;
+  margin-bottom: 1.25rem;
+  font-weight: 700;
   display: flex;
-  gap: 0.5rem;
   align-items: center;
+  gap: 0.6rem;
+}
+
+.recent-logs-section h2::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: #0284c7;
+  border-radius: 99px;
+}
+
+.logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.log-row-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
   flex-wrap: wrap;
+  gap: 1rem;
+  transition: all 0.2s ease;
 }
 
-.status-taken {
-  background: #d1fae5;
-  color: #065f46;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.35rem;
-  font-size: 0.75rem;
-  font-weight: 700;
+.log-row-card:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  transform: translateX(3px);
+  border-color: #cbd5e1;
 }
 
-.status-missed {
-  background: #fee2e2;
-  color: #991b1b;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.35rem;
-  font-size: 0.75rem;
-  font-weight: 700;
+.log-patient-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
 }
 
-.miss-percentage {
-  background: #fee2e2;
-  color: #991b1b;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.35rem;
-  font-size: 0.8rem;
-  font-weight: 700;
+.log-avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
 }
 
-.miss-count {
+.log-patient-name {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+
+.log-date {
   color: #64748b;
-  font-size: 0.8rem;
+  font-size: 0.775rem;
   font-weight: 600;
 }
 
-/* Media Queries */
-@media (max-width: 1024px) {
-  .charts-section {
-    grid-template-columns: 1fr;
-  }
+.log-vitals-pills {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.vital-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.vital-sleep {
+  background: #eef2ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+}
+
+.vital-weight {
+  background: #f0fdfa;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
+}
+
+.vital-mood {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.vital-mood.mood-happy {
+  background: #f0fdf4;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.vital-mood.mood-sad {
+  background: #fff1f2;
+  color: #991b1b;
+  border-color: #fecdd3;
 }
 
 @media (max-width: 768px) {
-  .dashboard-title {
-    font-size: 1.6rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .dashboard-title::before {
-    height: 24px;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .stat-card {
-    padding: 1.25rem;
-  }
-
-  .stat-value {
-    font-size: 1.8rem;
-  }
-
-  .recent-logs,
-  .chart-card {
-    padding: 1.25rem;
-  }
-
-  .log-row,
-  .medicine-detail-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
+  .dashboard-title { font-size: 1.6rem; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .charts-section { grid-template-columns: 1fr; }
+  .log-row-card { flex-direction: column; align-items: flex-start; }
 }
 
 @media (max-width: 480px) {
-  .dashboard-title {
-    font-size: 1.3rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-value {
-    font-size: 1.6rem;
-  }
-
-  .recent-logs,
-  .chart-card {
-    padding: 1rem;
-  }
+  .stats-grid { grid-template-columns: 1fr; }
 }

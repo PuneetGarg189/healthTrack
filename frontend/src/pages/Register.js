@@ -30,59 +30,83 @@ export const Register = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
+        {/* Left Side Banner */}
         <div className="auth-card-side-text">
-          <h2>Join<br/>HealthTrack</h2>
-          <p>Start your health analytics journey and take control of your wellness</p>
+          <div className="side-hero-content">
+            <span className="side-badge">🏥 CLINICAL REGISTRATION</span>
+            <h2>Join HealthTrack Portal</h2>
+            <p>Start managing patient records, prescriptions, and health analytics with enterprise-grade security.</p>
+            
+            <div className="hero-features">
+              <div className="feature-item">
+                <span className="feature-dot"></span>
+                <span>Secure Clinical Role Access</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-dot"></span>
+                <span>HIPAA & Compliance Diagnostics</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <h1 className="auth-title">🏥 HealthTrack</h1>
-          <p className="auth-subtitle">Create Your Account</p>
+        {/* Right Side Form */}
+        <div className="auth-form-wrapper">
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-brand-header">
+              <div className="brand-logo-frame">
+                <img src="/images/hospital-logo.jpg" alt="HealthTrack Logo" className="brand-logo-img" />
+              </div>
+              <div>
+                <h1 className="auth-title">HealthTrack</h1>
+              </div>
+            </div>
 
-          {error && <div className="error-message">{error}</div>}
+            {error && <div className="error-message">{error}</div>}
 
-          <div className="form-group">
-            <label>Full Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              placeholder="Enter your full name"
-            />
-          </div>
+            <div className="form-group">
+              <label>Full Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Dr. Jane Doe"
+              />
+            </div>
 
-          <div className="form-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="Enter your email"
-            />
-          </div>
+            <div className="form-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="doctor@hospital.com"
+              />
+            </div>
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              minLength="6"
-              required
-              placeholder="Create a password"
-            />
-          </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength="6"
+                required
+                placeholder="••••••••••••"
+              />
+            </div>
 
-          <button type="submit" className="btn-login" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Register'}
-          </button>
-        </form>
+            <button type="submit" className="btn-login" disabled={loading}>
+              {loading ? 'Creating Account...' : 'Register Account'}
+            </button>
 
-        <p className="auth-footer">
-          Already have an account? <a href="/login">Login here</a>
-        </p>
+            <p className="auth-footer">
+              Already have an account? <a href="/login">Login here</a>
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -47,8 +47,8 @@ export const Medications = () => {
         logDate: new Date(),
         timeTaken: getTimeTaken()
       });
-      setComplianceMessage(`Recorded: ${medication.medicineName} marked ${status}.`);
-      window.setTimeout(() => setComplianceMessage(''), 2500);
+      setComplianceMessage(`✓ Recorded: ${medication.medicineName} marked as ${status.toUpperCase()}`);
+      window.setTimeout(() => setComplianceMessage(''), 3000);
     } catch (error) {
       console.error('Error logging compliance:', error);
     }
@@ -73,29 +73,34 @@ export const Medications = () => {
       <main className="main-content">
         <div className="medications-container">
           <div className="medications-header">
-            <h1>💊 Medication Management</h1>
+            <div>
+              <h1 className="page-title">Prescription & Medication Tracker</h1>
+              <p className="page-subtitle">Log daily adherence, manage active prescriptions, and update dosage schedules</p>
+            </div>
             <button
-              className="btn-primary"
+              className="btn-add-med"
               onClick={() => setShowForm(!showForm)}
               disabled={!selectedPatientId}
             >
-              {showForm ? '✕ Cancel' : '➕ Add Medication'}
+              {showForm ? '✕ Close Form' : '➕ Add New Medication'}
             </button>
           </div>
 
-          <div className="patient-selector">
-            <label>Select Patient:</label>
-            <select
-              value={selectedPatientId}
-              onChange={(e) => setSelectedPatientId(e.target.value)}
-            >
-              <option value="">-- Select a patient --</option>
-              {patients.map(patient => (
-                <option key={patient._id} value={patient._id}>
-                  {patient.fullName}
-                </option>
-              ))}
-            </select>
+          <div className="patient-selector-card">
+            <label className="selector-label">Select Patient Profile:</label>
+            <div className="selector-control">
+              <select
+                value={selectedPatientId}
+                onChange={(e) => setSelectedPatientId(e.target.value)}
+              >
+                <option value="">-- Choose a patient --</option>
+                {patients.map(patient => (
+                  <option key={patient._id} value={patient._id}>
+                    👤 {patient.fullName} ({patient.condition || 'Patient'})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {showForm && selectedPatientId && (
@@ -109,55 +114,98 @@ export const Medications = () => {
           )}
 
           <div className="medications-list-section">
-            <h2>Active Medications</h2>
+            <div className="section-header">
+              <h2>Active Medications List</h2>
+              <span className="med-count-badge">
+                {medications.length} Prescription{medications.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+
             {complianceMessage && (
-              <div className="compliance-message" role="status">
+              <div className="compliance-message-banner" role="status">
                 {complianceMessage}
               </div>
             )}
+
             {loading ? (
-              <div className="loading">Loading medications...</div>
+              <div className="loading">Loading active prescriptions...</div>
             ) : medications.length === 0 ? (
-              <div className="empty-state">No medications found for selected patient</div>
+              <div className="empty-med-state">
+                <span className="empty-icon">💊</span>
+                <h3>No Active Medications</h3>
+                <p>No prescriptions have been registered for this patient yet.</p>
+              </div>
             ) : (
               <div className="medications-grid">
                 {medications.map(med => (
                   <div key={med._id} className="medication-card">
-                    <div className="medication-card-header">
-                      <h3>{med.medicineName}</h3>
+                    <div className="med-card-header">
+                      <div className="med-title-group">
+                        <span className="med-icon-badge">💊</span>
+                        <h3 className="med-name">{med.medicineName}</h3>
+                      </div>
                       <button
-                        className="btn-outline"
+                        className="btn-edit-med"
                         type="button"
                         onClick={() => handleEdit(med)}
                       >
-                        Edit
+                        ✏️ Edit
                       </button>
                     </div>
-                    <div className="med-details">
-                      <p><strong>Dosage:</strong> {med.dosage}</p>
-                      <p><strong>Frequency:</strong> {med.frequency}</p>
-                      <p>
-                        <strong>Schedule:</strong> {' '}
-                        {med.schedule.morning && '🌅'} {med.schedule.afternoon && '☀️'} {med.schedule.night && '🌙'}
-                      </p>
-                      {med.notes && <p><strong>Notes:</strong> {med.notes}</p>}
+
+                    <div className="med-details-box">
+                      <div className="med-detail-row">
+                        <span className="detail-label">Dosage</span>
+                        <span className="detail-value">{med.dosage}</span>
+                      </div>
+                      <div className="med-detail-row">
+                        <span className="detail-label">Frequency</span>
+                        <span className="detail-value frequency-tag">{med.frequency}</span>
+                      </div>
+                      <div className="med-detail-row">
+                        <span className="detail-label">Schedule</span>
+                        <div className="schedule-pills">
+                          {med.schedule?.morning && <span className="schedule-pill morning">🌅 Morning</span>}
+                          {med.schedule?.afternoon && <span className="schedule-pill afternoon">☀️ Afternoon</span>}
+                          {med.schedule?.night && <span className="schedule-pill night">🌙 Night</span>}
+                          {!med.schedule?.morning && !med.schedule?.afternoon && !med.schedule?.night && (
+                            <span className="schedule-pill">Daily</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {med.notes && (
+                        <div className="med-notes-row">
+                          <span className="detail-label">Notes</span>
+                          <p className="notes-text">📝 {med.notes}</p>
+                        </div>
+                      )}
                     </div>
-                    <div className="medication-actions">
+
+                    <div className="medication-action-buttons">
                       <button
-                        className="btn-success"
+                        className="btn-mark-taken"
                         type="button"
                         onClick={() => handleCompliance(med, 'Taken')}
                         disabled={loading}
                       >
-                        Mark Taken
+                        ✓ Mark Taken
                       </button>
                       <button
-                        className="btn-danger"
+                        className="btn-mark-partial"
+                        type="button"
+                        onClick={() => handleCompliance(med, 'Partial')}
+                        disabled={loading}
+                      >
+                        ⚠️ Mark Partial
+                      </button>
+                      <button
+                        className="btn-mark-missed"
                         type="button"
                         onClick={() => handleCompliance(med, 'Missed')}
                         disabled={loading}
                       >
-                        Mark Missed
+                        ✕ Mark Missed
                       </button>
                     </div>
                   </div>

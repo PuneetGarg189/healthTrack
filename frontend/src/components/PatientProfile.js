@@ -2,8 +2,8 @@ import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { DataContext } from '../context/DataContext';
 import '../styles/PatientProfile.css';
 
-export const PatientProfile = ({ patientId, onBack }) => {
-  const { fetchPatientAnalytics, fetchMedicationsForPatient, fetchHealthLogs, loading } = useContext(DataContext);
+export const PatientProfile = ({ patientId, onBack, onEdit }) => {
+  const { fetchPatientAnalytics, fetchMedicationsForPatient, fetchHealthLogs, patients, loading } = useContext(DataContext);
   const [analytics, setAnalytics] = useState(null);
   const [medications, setMedications] = useState([]);
   const [healthLogs, setHealthLogs] = useState([]);
@@ -27,11 +27,29 @@ export const PatientProfile = ({ patientId, onBack }) => {
   if (loading) return <div className="loading">Loading patient profile...</div>;
   if (!analytics) return <div className="error">Failed to load patient data</div>;
 
+  const currentPatientObj = patients.find(p => p._id === patientId) || {
+    _id: patientId,
+    fullName: analytics.patient?.name,
+    age: analytics.patient?.age,
+    condition: analytics.patient?.condition,
+    healthProfile: { bloodGroup: analytics.patient?.bloodGroup }
+  };
+
   return (
     <div className="patient-profile">
       <div className="profile-header">
-        <button className="btn-back" onClick={onBack}>← Back</button>
-        <h1>{analytics.patient?.name}</h1>
+        <div className="header-left">
+          <button className="btn-back" onClick={onBack}>← Back to List</button>
+          <h1 className="patient-title-name">{analytics.patient?.name}</h1>
+        </div>
+
+        <button
+          className="btn-edit-profile"
+          onClick={() => onEdit?.(currentPatientObj)}
+          title="Edit patient details or medical condition"
+        >
+          ✏️ Edit Patient Details / Condition
+        </button>
       </div>
 
       {/* Patient Overview Card */}
@@ -41,15 +59,15 @@ export const PatientProfile = ({ patientId, onBack }) => {
           <span className="value">{analytics.patient?.age} years</span>
         </div>
         <div className="overview-item">
-          <span className="label">Problem</span>
-          <span className="value">{analytics.patient?.condition}</span>
+          <span className="label">Medical Condition</span>
+          <span className="value condition-val">🩺 {analytics.patient?.condition || 'N/A'}</span>
         </div>
         <div className="overview-item">
           <span className="label">Blood Group</span>
-          <span className="value badge">{analytics.patient?.bloodGroup}</span>
+          <span className="value badge">🩸 {analytics.patient?.bloodGroup}</span>
         </div>
         <div className="overview-item">
-          <span className="label">Active Medicines</span>
+          <span className="label">Active Prescriptions</span>
           <span className="value">{analytics.activeMedicines}</span>
         </div>
       </div>
@@ -57,7 +75,7 @@ export const PatientProfile = ({ patientId, onBack }) => {
       {/* Allergies */}
       {analytics.patient?.allergies?.length > 0 && (
         <div className="allergies-section">
-          <h3>⚠️ Allergies</h3>
+          <h3>⚠️ Known Allergies</h3>
           <div className="allergy-list">
             {analytics.patient.allergies.map((allergy, idx) => (
               <span key={idx} className="allergy-badge">{allergy}</span>
@@ -72,13 +90,13 @@ export const PatientProfile = ({ patientId, onBack }) => {
           className={`tab ${activeTab === 'overview' ? 'active' : ''}`}
           onClick={() => setActiveTab('overview')}
         >
-          📊 Overview
+          📊 Adherence Overview
         </button>
         <button
           className={`tab ${activeTab === 'medications' ? 'active' : ''}`}
           onClick={() => setActiveTab('medications')}
         >
-          💊 Medications
+          💊 Active Medications
         </button>
         <button
           className={`tab ${activeTab === 'logs' ? 'active' : ''}`}
@@ -95,7 +113,7 @@ export const PatientProfile = ({ patientId, onBack }) => {
             {/* Compliance Summary */}
             <div className="summary-cards">
               <div className="summary-card">
-                <div className="summary-value">{analytics.complianceSummary?.complianceRate || 0}%</div>
+                <div className="summary-value">{Math.round(analytics.complianceSummary?.complianceRate || 0)}%</div>
                 <div className="summary-label">Compliance Rate</div>
               </div>
               <div className="summary-card">
@@ -126,12 +144,12 @@ export const PatientProfile = ({ patientId, onBack }) => {
             {/* Compliance Chart */}
             {analytics.complianceChart?.length > 0 && (
               <div className="chart-section">
-                <h3>Medication Compliance</h3>
+                <h3>Medication Compliance Breakdown</h3>
                 <div className="compliance-chart">
                   {analytics.complianceChart.map(item => (
                     <div key={item._id} className="compliance-item">
                       <span className={`status-label ${item._id}`}>{item._id}</span>
-                      <span className="count">{item.count}</span>
+                      <span className="count">{item.count} doses</span>
                     </div>
                   ))}
                 </div>
