@@ -2,7 +2,7 @@
 
 A full-stack healthcare management and analytics platform built using the MERN stack. HealthTrack helps healthcare providers manage patients, track medications, monitor compliance, record health logs, and gain insights through interactive dashboards.
 
-🔗 **Live Demo:** https://health-track-five-zeta.vercel.app
+🔗 **Live Demo:** https://health-track-lemon.vercel.app/
 
 ---
 
