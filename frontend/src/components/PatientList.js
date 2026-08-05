@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { DataContext } from '../context/DataContext';
 import '../styles/PatientList.css';
 
@@ -6,9 +6,9 @@ export const PatientList = ({ onPatientSelect, onAddClick }) => {
   const { patients, fetchPatients, deletePatient, searchPatients, loading } = useContext(DataContext);
   const [searchTerm, setSearchTerm] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchPatients();
-  }, []);
+  }, [fetchPatients]);
 
   const handleSearch = async (e) => {
     const value = e.target.value;

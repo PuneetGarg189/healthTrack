@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { GlobalDashboard } from '../components/GlobalDashboard';
 import '../styles/Dashboard.css';

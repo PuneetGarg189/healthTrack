@@ -1,15 +1,25 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Sidebar.css';
 
 export const Sidebar = () => {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const toggleMenu = () => {
+    setIsOpen(prev => !prev);
+  };
+
+  const closeMenu = () => {
+    setIsOpen(false);
   };
 
   const menuItems = [
@@ -21,32 +31,64 @@ export const Sidebar = () => {
   ];
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-header">
-        <h1 className="sidebar-title">🏥 HealthTrack</h1>
-        <p className="sidebar-subtitle">Analytics System</p>
-      </div>
+    <>
+      {/* Mobile Top Header Bar */}
+      <header className="mobile-header">
+        <div className="mobile-brand" onClick={() => { navigate('/dashboard'); closeMenu(); }}>
+          <span className="brand-icon">🏥</span>
+          <span className="brand-title">HealthTrack</span>
+        </div>
+        <button
+          className="mobile-toggle-btn"
+          onClick={toggleMenu}
+          aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        >
+          {isOpen ? '✕' : '☰'}
+        </button>
+      </header>
 
-      <nav className="sidebar-nav">
-        {menuItems.map(item => (
-          <a
-            key={item.path}
-            href={item.path}
-            className="nav-item"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate(item.path);
-            }}
-          >
-            <span className="nav-icon">{item.icon}</span>
-            <span className="nav-label">{item.label}</span>
-          </a>
-        ))}
-      </nav>
+      {/* Backdrop Overlay for Mobile Drawer */}
+      {isOpen && (
+        <div className="sidebar-overlay" onClick={closeMenu} />
+      )}
 
-      <button onClick={handleLogout} className="logout-btn">
-        🚪 Logout
-      </button>
-    </aside>
+      {/* Main Sidebar Navigation */}
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="sidebar-brand-wrapper">
+            <h1 className="sidebar-title">🏥 HealthTrack</h1>
+            <p className="sidebar-subtitle">Analytics System</p>
+          </div>
+          <button className="sidebar-close-btn" onClick={closeMenu} aria-label="Close menu">
+            ✕
+          </button>
+        </div>
+
+        <nav className="sidebar-nav">
+          {menuItems.map(item => {
+            const isActive = location.pathname === item.path || (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
+            return (
+              <a
+                key={item.path}
+                href={item.path}
+                className={`nav-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(item.path);
+                  closeMenu();
+                }}
+              >
+                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-label">{item.label}</span>
+              </a>
+            );
+          })}
+        </nav>
+
+        <button onClick={handleLogout} className="logout-btn">
+          🚪 Logout
+        </button>
+      </aside>
+    </>
   );
 };

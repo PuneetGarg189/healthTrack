@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { DataContext } from '../context/DataContext';
 import { MedicationForm } from '../components/MedicationForm';
@@ -18,17 +18,17 @@ export const Medications = () => {
   const [editingMedication, setEditingMedication] = useState(null);
   const [complianceMessage, setComplianceMessage] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchPatients();
   }, [fetchPatients]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (patients.length > 0 && !selectedPatientId) {
       setSelectedPatientId(patients[0]._id);
     }
   }, [patients, selectedPatientId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedPatientId) {
       fetchMedicationsForPatient(selectedPatientId);
     }

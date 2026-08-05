@@ -1,10 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { DataContext } from '../context/DataContext';
+import { Sidebar } from '../components/Sidebar';
 import '../styles/MedicineSchedule.css';
 
 const MedicineSchedule = () => {
   const { patientId } = useParams();
+  const navigate = useNavigate();
   const { patients, fetchPatients, fetchMedicationsForPatient } = useContext(DataContext);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [complianceHistory, setComplianceHistory] = useState([]);
@@ -73,165 +75,175 @@ const MedicineSchedule = () => {
   };
 
   return (
-    <div className="medicine-schedule-container">
-      <div className="schedule-header">
-        <h2>Medicine Schedule & Compliance</h2>
-        {patient && <p className="patient-name">Patient: {patient.fullName}</p>}
-      </div>
-
-      <div className="schedule-content">
-        <div className="medicines-list">
-          <h3>Active Medicines</h3>
-          <div className="medicines-grid">
-            {dataLoading ? (
-              <p className="no-data">Loading medicines...</p>
-            ) : patientMeds.length > 0 ? (
-              patientMeds.map((med) => (
-                <div
-                  key={med._id}
-                  className={`medicine-card ${selectedMedicine?._id === med._id ? 'active' : ''}`}
-                  onClick={() => setSelectedMedicine(med)}
-                >
-                  <div className="med-name">{med.medicineName}</div>
-                  <div className="med-dosage">{med.dosage}</div>
-                  <div className="med-frequency">{med.frequency}</div>
-                  <div className="schedule-show">
-                    {getScheduleDisplay(med).length > 0 && (
-                      <span className="schedule-badge">
-                        {getScheduleDisplay(med).length} times/day
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="no-data">No medicines added for this patient</p>
-            )}
+    <div className="app-layout">
+      <Sidebar />
+      <main className="main-content">
+        <div className="medicine-schedule-container">
+          <div className="schedule-header">
+            <button className="schedule-back-btn" onClick={() => navigate('/medicine-schedule')}>
+              ← Back to Overview
+            </button>
+            <div className="schedule-header-text">
+              <h2>Medicine Schedule & Compliance</h2>
+              {patient && <p className="patient-name">Patient: {patient.fullName}</p>}
+            </div>
           </div>
-        </div>
 
-        {selectedMedicine && (
-          <div className="schedule-detail">
-            <div className="medicine-detail-header">
-              <h3>{selectedMedicine.medicineName}</h3>
-              <button
-                className="close-btn"
-                onClick={() => {
-                  setSelectedMedicine(null);
-                  setComplianceHistory([]);
-                }}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="medicine-info-grid">
-              <div className="info-item">
-                <label>Dosage</label>
-                <span>{selectedMedicine.dosage}</span>
-              </div>
-              <div className="info-item">
-                <label>Frequency</label>
-                <span>{selectedMedicine.frequency}</span>
-              </div>
-              <div className="info-item">
-                <label>Start Date</label>
-                <span>{new Date(selectedMedicine.startDate).toLocaleDateString()}</span>
-              </div>
-              <div className="info-item">
-                <label>End Date</label>
-                <span>{selectedMedicine.endDate ? new Date(selectedMedicine.endDate).toLocaleDateString() : 'Ongoing'}</span>
-              </div>
-            </div>
-
-            <div className="schedule-times">
-              <h4>Daily Schedule</h4>
-              <div className="times-grid">
-                {selectedMedicine.schedule?.morning && (
-                  <div className="time-slot morning">
-                    <div className="time">8:00 AM</div>
-                    <div className="period">Morning</div>
-                  </div>
-                )}
-                {selectedMedicine.schedule?.afternoon && (
-                  <div className="time-slot afternoon">
-                    <div className="time">2:00 PM</div>
-                    <div className="period">Afternoon</div>
-                  </div>
-                )}
-                {selectedMedicine.schedule?.night && (
-                  <div className="time-slot night">
-                    <div className="time">8:00 PM</div>
-                    <div className="period">Night</div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {selectedMedicine.sideEffects && selectedMedicine.sideEffects.length > 0 && (
-              <div className="side-effects">
-                <h4>Known Side Effects</h4>
-                <div className="effects-list">
-                  {selectedMedicine.sideEffects.map((effect, idx) => (
-                    <span key={idx} className="effect-tag">
-                      {effect}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="compliance-section">
-              <h4>Compliance History (Last 5 Logs)</h4>
-              <div className="history-table">
-                <div className="table-header">
-                  <div className="col">Date</div>
-                  <div className="col">Status</div>
-                  <div className="col">Time Taken</div>
-                </div>
-                {!loading && complianceHistory.length > 0 ? (
-                  complianceHistory.map((record, idx) => (
-                    <div key={idx} className="table-row">
-                      <div className="col">
-                        {record.date.toLocaleDateString()}
+          <div className="schedule-content">
+            <div className="medicines-list">
+              <h3>Active Medicines</h3>
+              <div className="medicines-grid">
+                {dataLoading ? (
+                  <p className="no-data">Loading medicines...</p>
+                ) : patientMeds.length > 0 ? (
+                  patientMeds.map((med) => (
+                    <div
+                      key={med._id}
+                      className={`medicine-card ${selectedMedicine?._id === med._id ? 'active' : ''}`}
+                      onClick={() => setSelectedMedicine(med)}
+                    >
+                      <div className="med-name">{med.medicineName}</div>
+                      <div className="med-dosage">{med.dosage}</div>
+                      <div className="med-frequency">{med.frequency}</div>
+                      <div className="schedule-show">
+                        {getScheduleDisplay(med).length > 0 && (
+                          <span className="schedule-badge">
+                            {getScheduleDisplay(med).length} times/day
+                          </span>
+                        )}
                       </div>
-                      <div className="col">
-                        <span
-                          className="status-badge"
-                          style={{ backgroundColor: getStatusColor(record.status) }}
-                        >
-                          {record.status}
-                        </span>
-                      </div>
-                      <div className="col">{record.time}</div>
                     </div>
                   ))
                 ) : (
-                  <div className="no-history">No compliance records yet</div>
+                  <p className="no-data">No medicines added for this patient</p>
                 )}
               </div>
             </div>
 
-            <div className="compliance-stats">
-              <div className="stat-card">
-                <div className="stat-label">This Week</div>
-                <div className="stat-value">6/7</div>
-                <div className="stat-percentage">85%</div>
+            {selectedMedicine && (
+              <div className="schedule-detail">
+                <div className="medicine-detail-header">
+                  <h3>{selectedMedicine.medicineName}</h3>
+                  <button
+                    className="close-btn"
+                    onClick={() => {
+                      setSelectedMedicine(null);
+                      setComplianceHistory([]);
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="medicine-info-grid">
+                  <div className="info-item">
+                    <label>Dosage</label>
+                    <span>{selectedMedicine.dosage}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Frequency</label>
+                    <span>{selectedMedicine.frequency}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Start Date</label>
+                    <span>{new Date(selectedMedicine.startDate).toLocaleDateString()}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>End Date</label>
+                    <span>{selectedMedicine.endDate ? new Date(selectedMedicine.endDate).toLocaleDateString() : 'Ongoing'}</span>
+                  </div>
+                </div>
+
+                <div className="schedule-times">
+                  <h4>Daily Schedule</h4>
+                  <div className="times-grid">
+                    {selectedMedicine.schedule?.morning && (
+                      <div className="time-slot morning">
+                        <div className="time">8:00 AM</div>
+                        <div className="period">Morning</div>
+                      </div>
+                    )}
+                    {selectedMedicine.schedule?.afternoon && (
+                      <div className="time-slot afternoon">
+                        <div className="time">2:00 PM</div>
+                        <div className="period">Afternoon</div>
+                      </div>
+                    )}
+                    {selectedMedicine.schedule?.night && (
+                      <div className="time-slot night">
+                        <div className="time">8:00 PM</div>
+                        <div className="period">Night</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {selectedMedicine.sideEffects && selectedMedicine.sideEffects.length > 0 && (
+                  <div className="side-effects">
+                    <h4>Known Side Effects</h4>
+                    <div className="effects-list">
+                      {selectedMedicine.sideEffects.map((effect, idx) => (
+                        <span key={idx} className="effect-tag">
+                          {effect}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="compliance-section">
+                  <h4>Compliance History (Last 5 Logs)</h4>
+                  <div className="history-table">
+                    <div className="table-header">
+                      <div className="col">Date</div>
+                      <div className="col">Status</div>
+                      <div className="col">Time Taken</div>
+                    </div>
+                    {!loading && complianceHistory.length > 0 ? (
+                      complianceHistory.map((record, idx) => (
+                        <div key={idx} className="table-row">
+                          <div className="col">
+                            {record.date.toLocaleDateString()}
+                          </div>
+                          <div className="col">
+                            <span
+                              className="status-badge"
+                              style={{ backgroundColor: getStatusColor(record.status) }}
+                            >
+                              {record.status}
+                            </span>
+                          </div>
+                          <div className="col">{record.time}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="no-history">No compliance records yet</div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="compliance-stats">
+                  <div className="stat-card">
+                    <div className="stat-label">This Week</div>
+                    <div className="stat-value">6/7</div>
+                    <div className="stat-percentage">85%</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="stat-label">This Month</div>
+                    <div className="stat-value">24/30</div>
+                    <div className="stat-percentage">80%</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="stat-label">Overall</div>
+                    <div className="stat-value">156/180</div>
+                    <div className="stat-percentage">87%</div>
+                  </div>
+                </div>
               </div>
-              <div className="stat-card">
-                <div className="stat-label">This Month</div>
-                <div className="stat-value">24/30</div>
-                <div className="stat-percentage">80%</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-label">Overall</div>
-                <div className="stat-value">156/180</div>
-                <div className="stat-percentage">87%</div>
-              </div>
-            </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { DataContext } from '../context/DataContext';
 import '../styles/PatientProfile.css';
 
@@ -9,11 +9,7 @@ export const PatientProfile = ({ patientId, onBack }) => {
   const [healthLogs, setHealthLogs] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
 
-  useEffect(() => {
-    loadPatientData();
-  }, [patientId]);
-
-  const loadPatientData = async () => {
+  const loadPatientData = useCallback(async () => {
     const analyticsData = await fetchPatientAnalytics(patientId);
     setAnalytics(analyticsData);
     
@@ -22,7 +18,11 @@ export const PatientProfile = ({ patientId, onBack }) => {
     
     const logsData = await fetchHealthLogs(patientId);
     setHealthLogs(logsData.data || []);
-  };
+  }, [patientId, fetchPatientAnalytics, fetchMedicationsForPatient, fetchHealthLogs]);
+
+  useEffect(() => {
+    loadPatientData();
+  }, [loadPatientData]);
 
   if (loading) return <div className="loading">Loading patient profile...</div>;
   if (!analytics) return <div className="error">Failed to load patient data</div>;

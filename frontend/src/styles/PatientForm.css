@@ -1,18 +1,20 @@
 /* Patient Form Styles */
 .patient-form {
   max-width: 900px;
-  background: white;
-  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.74);
+  border-radius: 1rem;
   padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
 }
 
 .patient-form h2 {
   font-size: 1.75rem;
-  color: #1e293b;
+  color: #0f172a;
   margin-bottom: 1.5rem;
-  font-weight: 700;
+  font-weight: 800;
   display: flex;
   align-items: center;
   gap: 0.7rem;
@@ -29,7 +31,7 @@
 .form-section {
   margin-bottom: 2rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .form-section:last-of-type {
@@ -40,7 +42,7 @@
   font-size: 1.1rem;
   color: #14b8a6;
   margin-bottom: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -83,6 +85,9 @@
   font-size: 0.95rem;
   transition: all 0.3s ease;
   font-family: inherit;
+  min-height: 44px;
+  background: rgba(255, 255, 255, 0.85);
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -90,7 +95,7 @@
 .form-group textarea:focus {
   outline: none;
   border-color: #14b8a6;
-  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
 }
 
 .form-group textarea {
@@ -121,9 +126,10 @@
   padding: 0.75rem 1.5rem;
   border-radius: 0.6rem;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.3s ease;
   white-space: nowrap;
+  min-height: 44px;
 }
 
 .input-with-btn button:hover {
@@ -145,6 +151,7 @@
   padding: 0.5rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .tag button {
@@ -174,30 +181,33 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .checkbox input {
   width: auto;
+  min-height: auto;
   margin: 0;
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
   color: white;
   border: none;
-  padding: 0.75rem 2rem;
-  border-radius: 0.375rem;
+  padding: 0.85rem 2rem;
+  border-radius: 9999px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 8px 20px rgba(20, 184, 166, 0.3);
   width: 100%;
+  min-height: 48px;
 }
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 12px 25px rgba(20, 184, 166, 0.4);
 }
 
 .submit-btn:disabled {
@@ -206,10 +216,8 @@
 }
 
 @media (max-width: 768px) {
-
   .patient-form {
-    padding: 1rem;
-    border-radius: 0.75rem;
+    padding: 1.25rem;
   }
 
   .patient-form h2 {
@@ -221,29 +229,9 @@
     height: 24px;
   }
 
-  .form-section {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-  }
-
   .form-row {
     grid-template-columns: 1fr;
     gap: 1rem;
-  }
-
-  .form-group {
-    margin-bottom: 1rem;
-  }
-
-  .form-group label {
-    font-size: 0.9rem;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 0.85rem;
-    font-size: 0.95rem;
   }
 
   .input-with-btn {
@@ -258,36 +246,14 @@
     flex-direction: column;
     gap: 0.75rem;
   }
-
-  .checkbox {
-    padding: 0.5rem 0;
-  }
-
-  .tag {
-    font-size: 0.8rem;
-  }
-
-  .submit-btn {
-    width: 100%;
-    padding: 0.95rem;
-  }
 }
 
 @media (max-width: 480px) {
-
   .patient-form {
-    padding: 0.75rem;
+    padding: 1rem;
   }
 
   .patient-form h2 {
     font-size: 1.2rem;
-  }
-
-  .form-group label {
-    font-size: 0.85rem;
-  }
-
-  .submit-btn {
-    font-size: 0.95rem;
   }
 }

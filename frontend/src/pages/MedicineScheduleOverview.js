@@ -4,6 +4,8 @@ import { Sidebar } from '../components/Sidebar';
 import { DataContext } from '../context/DataContext';
 import '../styles/MedicineScheduleOverview.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://health-track-tlss.vercel.app/api';
+
 export const MedicineScheduleOverview = () => {
   const navigate = useNavigate();
   const { patients, fetchPatients } = useContext(DataContext);
@@ -11,8 +13,6 @@ export const MedicineScheduleOverview = () => {
   const [medicationsByPatient, setMedicationsByPatient] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://health-track-tlss.vercel.app/api';
 
   useEffect(() => {
     fetchPatients();
@@ -56,7 +56,7 @@ export const MedicineScheduleOverview = () => {
     };
 
     fetchMedications();
-  }, [patients, API_BASE_URL]);
+  }, [patients]);
 
   const filteredPatients = patients.filter(p =>
     p.isActive && p.fullName.toLowerCase().includes(searchTerm.toLowerCase())

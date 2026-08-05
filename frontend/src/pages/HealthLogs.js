@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { DataContext } from '../context/DataContext';
 import { HealthLogForm } from '../components/HealthLogForm';
@@ -9,17 +9,17 @@ export const HealthLogs = () => {
   const [selectedPatientId, setSelectedPatientId] = useState('');
   const [showForm, setShowForm] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (patients.length > 0 && !selectedPatientId) {
       setSelectedPatientId(patients[0]._id);
     }
-  }, [patients]);
+  }, [patients, selectedPatientId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedPatientId) {
       fetchHealthLogs(selectedPatientId);
     }
-  }, [selectedPatientId]);
+  }, [selectedPatientId, fetchHealthLogs]);
 
   return (
     <div className="app-layout">
