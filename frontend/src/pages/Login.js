@@ -99,7 +99,7 @@ export const Login = () => {
             </button>
 
             {/* Quick Autofill Demo Credentials */}
-            <div className="demo-credentials-box">
+            {/* <div className="demo-credentials-box">
               <div className="demo-header">
                 <span>🔑 Quick Demo Credentials</span>
                 <button type="button" className="btn-autofill" onClick={autofillDemo}>Auto-Fill</button>
@@ -108,7 +108,7 @@ export const Login = () => {
                 <span>Email: <strong>admin@healthtrack.com</strong></span>
                 <span>Pass: <strong>password123</strong></span>
               </div>
-            </div>
+            </div> */}
 
             <p className="auth-footer">
               Don't have an account? <a href="/register">Register here</a>
